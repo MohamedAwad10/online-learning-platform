@@ -1,0 +1,47 @@
+package com.onlinelearning.online_learning_platform.model.review;
+
+import com.onlinelearning.online_learning_platform.model.Course;
+import com.onlinelearning.online_learning_platform.model.Student;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
+
+@Setter
+@Getter
+@ToString
+@Entity
+@Table(name = "review")
+@IdClass(ReviewID.class)
+public class Review {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
+    @Column(
+            name = "rate",
+            nullable = false
+    )
+    private Double rate;
+
+    @Column(name = "comment")
+    private String comment;
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDate createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+}
