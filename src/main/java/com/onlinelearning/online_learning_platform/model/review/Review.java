@@ -46,7 +46,7 @@ public class Review {
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Student student;
 }

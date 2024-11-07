@@ -1,10 +1,11 @@
 package com.onlinelearning.online_learning_platform.model;
 
+import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
+import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.review.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -77,4 +78,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Review> reviews;
+
+    @OneToMany(mappedBy = "course")
+    private Set<Enrollment> enrollments;
 }

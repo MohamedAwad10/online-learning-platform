@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 @Setter
 @Getter
 @ToString
@@ -27,4 +29,7 @@ public class Category {
             unique = true
     )
     private String categoryName;
+
+    @OneToMany(mappedBy = "category")
+    private Set<Course> courses;
 }

@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.lang.reflect.Member;
+import java.util.Set;
+
 @Setter
 @Getter
 @ToString
@@ -24,7 +27,14 @@ public class Tag {
     @NotBlank(message = "Tag cannot be blank")
     @Column(
             name = "tag_name",
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private String tagName;
+
+    @ManyToMany(
+            mappedBy = "tags",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
+    private Set<Course> courses;
 }

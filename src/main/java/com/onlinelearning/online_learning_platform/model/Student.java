@@ -1,5 +1,6 @@
 package com.onlinelearning.online_learning_platform.model;
 
+import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,4 +16,7 @@ public class Student extends Users{
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
+
+    @OneToMany(mappedBy = "student")
+    private Set<Enrollment> enrollments;
 }
