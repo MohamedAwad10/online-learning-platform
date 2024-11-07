@@ -1,5 +1,6 @@
-package com.onlinelearning.online_learning_platform.model;
+package com.onlinelearning.online_learning_platform.model.lesson;
 
+import com.onlinelearning.online_learning_platform.model.Course;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,12 +13,18 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "lesson")
+@IdClass(LessonID.class)
 public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
+    @Id
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @NotNull(message = "Title must not be null")
     @NotBlank(message = "Title cannot be blank")
@@ -38,8 +45,4 @@ public class Lesson {
 
     @Column(name = "completed")
     private boolean completed;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "course_id")
-    private Course course;
 }
