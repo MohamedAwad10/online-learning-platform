@@ -12,6 +12,6 @@ import lombok.Setter;
 @Table(name = "admin")
 public class Admin extends Users{
 
-    @Column(name = "bio")
+    @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 }

@@ -1,6 +1,10 @@
 package com.onlinelearning.online_learning_platform.model;
 
+import com.onlinelearning.online_learning_platform.model.review.Review;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,6 +26,8 @@ public class Course {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull(message = "Title must not be null")
+    @NotBlank(message = "Title cannot be blank")
     @Column(
             name = "title",
             nullable = false,
@@ -29,6 +35,8 @@ public class Course {
     )
     private String title;
 
+    @NotNull(message = "Description must not be null")
+    @NotBlank(message = "Description cannot be blank")
     @Column(
             name = "description",
             nullable = false
@@ -43,7 +51,9 @@ public class Course {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
-    @ManyToMany
+    @NotNull(message = "Tags must not be null")
+    @NotBlank(message = "Tags cannot be blank")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "course_tag",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -51,11 +61,20 @@ public class Course {
     )
     private Set<Tag> tags;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(
+            mappedBy = "course",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.LAZY)
+    private Set<Lesson> lessons;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Review> reviews;
 }

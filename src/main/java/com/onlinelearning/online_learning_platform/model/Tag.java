@@ -1,6 +1,9 @@
 package com.onlinelearning.online_learning_platform.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,6 +20,8 @@ public class Tag {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull(message = "Tag is required")
+    @NotBlank(message = "Tag cannot be blank")
     @Column(
             name = "tag_name",
             nullable = false

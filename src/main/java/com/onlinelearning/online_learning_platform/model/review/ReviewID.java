@@ -11,7 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ReviewID implements Serializable {
-
-    private Integer id;
-    private Course course;
+    private Integer id;       // Unique identifier for the review (will not be auto-incremented)
+    private Course course;    // Foreign key to Course, part of the composite key
 }

@@ -3,10 +3,13 @@ package com.onlinelearning.online_learning_platform.model.review;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDate;
 
@@ -24,10 +27,12 @@ public class Review {
     private Integer id;
 
     @Id
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
 
+    @NotNull(message = "Rating must not be null")
+    @NotBlank(message = "Rating cannot be blank")
     @Column(
             name = "rate",
             nullable = false
@@ -41,7 +46,7 @@ public class Review {
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Student student;
 }
