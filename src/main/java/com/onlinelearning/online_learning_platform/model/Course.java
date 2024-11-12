@@ -1,5 +1,6 @@
 package com.onlinelearning.online_learning_platform.model;
 
+import com.onlinelearning.online_learning_platform.enums.CourseStatus;
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.review.Review;
@@ -7,6 +8,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,6 +23,7 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "course")
+@Builder // used for mapping
 public class Course {
 
     @Id
@@ -55,7 +58,7 @@ public class Course {
     private LocalDate updatedAt;
 
     @Column(name = "status", nullable = false)
-    private Status status = Status.PENDING;
+    private CourseStatus status = CourseStatus.PENDING;
 
     @NotNull(message = "Tags must not be null")
     @NotBlank(message = "Tags cannot be blank")
@@ -105,10 +108,4 @@ public class Course {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
     private Set<Enrollment> enrollments;
-
-    public enum Status{
-        REJECTED,
-        PENDING,
-        APPROVED
-    }
 }
