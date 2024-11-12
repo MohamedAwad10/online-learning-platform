@@ -35,6 +35,7 @@ public class Tag {
     @ManyToMany(
             mappedBy = "tags",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY // join fetch
+    )
     private Set<Course> courses;
 }

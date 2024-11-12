@@ -22,7 +22,10 @@ public class Lesson {
     private Integer id;
 
     @Id
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "course_id")
     private Course course;
 

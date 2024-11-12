@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Set;
 
@@ -14,14 +15,18 @@ import java.util.Set;
 @Table(name = "instructor")
 public class Instructor extends Users{
 
-    @Column(name = "bio", columnDefinition = "TEXT")
+    @NotNull(message = "Bio is required")
+    @Column(name = "bio", nullable = false, columnDefinition = "TEXT")
     private String bio;
 
-    @NotNull(message = "Years of experience must not be null")
-    @NotBlank(message = "Years of experience cannot be blank")
-    @Column(name = "years_of_experience", nullable = false)
-    private String yearsOfExperience;
 
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(name = "years_of_experience", columnDefinition = "INT")
+    private int yearsOfExperience = 0;
+
+    @OneToMany(
+            mappedBy = "instructor",
+            cascade = CascadeType.MERGE, // test
+            fetch = FetchType.LAZY // Use EAGER for test
+    )
     private Set<Course> courses;
 }

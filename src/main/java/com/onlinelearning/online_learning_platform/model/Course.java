@@ -6,6 +6,7 @@ import com.onlinelearning.online_learning_platform.model.review.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,7 +41,8 @@ public class Course {
     @NotBlank(message = "Description cannot be blank")
     @Column(
             name = "description",
-            nullable = false
+            nullable = false,
+            columnDefinition = "TEXT"
     )
     private String description;
 
@@ -52,9 +54,12 @@ public class Course {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
+    @Column(name = "status", nullable = false)
+    private Status status = Status.PENDING;
+
     @NotNull(message = "Tags must not be null")
     @NotBlank(message = "Tags cannot be blank")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "course_tag",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -62,23 +67,48 @@ public class Course {
     )
     private Set<Tag> tags;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToOne(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // try not use cascade
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+
     @OneToMany(
             mappedBy = "course",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            fetch = FetchType.LAZY)
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     private Set<Lesson> lessons;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "course",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     private Set<Review> reviews;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(
+            mappedBy = "course",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
     private Set<Enrollment> enrollments;
+
+    public enum Status{
+        REJECTED,
+        PENDING,
+        APPROVED
+    }
 }

@@ -3,6 +3,7 @@ package com.onlinelearning.online_learning_platform.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,6 +24,7 @@ public class Category {
 
     @NotNull(message = "Category name must not be null")
     @NotBlank(message = "Category name cannot be blank")
+    @Size(min = 5, message = "Category name must be more than 4 character")
     @Column(
             name = "category_name",
             nullable = false,
@@ -30,6 +32,10 @@ public class Category {
     )
     private String categoryName;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(
+            mappedBy = "category",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.MERGE // test
+    )
     private Set<Course> courses;
 }

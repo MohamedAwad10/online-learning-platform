@@ -19,12 +19,18 @@ import java.time.LocalDate;
 public class Enrollment {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}
+    )
     @JoinColumn(name = "student_id")
     private Student student;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}
+    )
     @JoinColumn(name = "course_id")
     private Course course;
 

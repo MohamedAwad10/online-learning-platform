@@ -25,7 +25,7 @@ public class Users {
     private Integer id;
 
     @NotNull(message = "First name cannot be null")
-    @Size(min = 3, max = 20, message = "First name must be between 3 and 20 characters")
+    @Size(min = 3, max = 20, message = "First name must be between 3 and 20 character")
     @NotBlank(message = "First name cannot be blank")
     @Column(
             name = "first_name",
@@ -44,6 +44,8 @@ public class Users {
 
     @Email(message = "Email should be valid")
     @NotNull(message = "Email is required")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            message = "Enter a correct pattern for your email")
     @Column(
             name = "email",
             unique = true,
@@ -54,6 +56,9 @@ public class Users {
     @NotNull(message = "Password cannot be null")
     @Size(min = 8, message = "Password must be at least 8 characters")
     @NotBlank(message = "Password cannot be blank")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&+/#.-])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "Password must be at least 8 characters long and include at least one uppercase letter," +
+                    " one lowercase letter, one number, and one special character ")
     @Column(
             name = "password",
             nullable = false
@@ -67,7 +72,7 @@ public class Users {
     @Column(name = "profile_image")
     private String profileImage;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -79,7 +84,7 @@ public class Users {
             mappedBy = "user",
             orphanRemoval = true,
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     private Set<UserContacts> contacts;
 }

@@ -17,6 +17,10 @@ public class Student extends Users{
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(
+            mappedBy = "student",
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
     private Set<Enrollment> enrollments;
 }
