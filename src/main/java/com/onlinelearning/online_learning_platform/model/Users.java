@@ -3,9 +3,7 @@ package com.onlinelearning.online_learning_platform.model;
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -14,9 +12,12 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @Entity
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Users {
 
     @Id
@@ -54,7 +55,6 @@ public class Users {
     private String email;
 
     @NotNull(message = "Password cannot be null")
-    @Size(min = 8, message = "Password must be at least 8 characters")
     @NotBlank(message = "Password cannot be blank")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&+/#.-])[A-Za-z\\d@$!%*?&]{8,}$",
             message = "Password must be at least 8 characters long and include at least one uppercase letter," +
@@ -65,11 +65,13 @@ public class Users {
     )
     private String password;
 
+    @Setter
+    @Getter
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @Column(name = "profile_image")
+    @Column(name = "profile_image", columnDefinition = "TEXT")
     private String profileImage;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -87,4 +89,5 @@ public class Users {
             fetch = FetchType.EAGER
     )
     private Set<UserContacts> contacts;
+
 }
