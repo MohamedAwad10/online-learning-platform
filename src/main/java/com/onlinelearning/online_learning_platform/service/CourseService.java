@@ -1,15 +1,17 @@
 package com.onlinelearning.online_learning_platform.service;
 
-import com.onlinelearning.online_learning_platform.dto.CourseDTO;
+import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
+import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
 import com.onlinelearning.online_learning_platform.enums.CourseStatus;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.repository.CourseRepository;
+import com.onlinelearning.online_learning_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,53 +19,103 @@ public class CourseService {
 
     private CourseRepository courseRepository;
     private CourseMapper courseMapper;
+    private UserRepository userRepository;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper){
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper
+            , UserRepository userRepository){
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
+        this.userRepository = userRepository;
     }
 
-    public ResponseEntity<String> insert(CourseDTO courseDTO) {
+    public String insert(Integer instructorId, CourseCreationDTO courseCreationDTO) throws Exception{
 
-        Optional<Course> optionalCourse = courseRepository.findByTitle(courseDTO.getTitle());
+//        Optional<Instructor> optionalInstructor = userRepository.findById(instructorId);
+
+        Optional<Course> optionalCourse = courseRepository.findByTitle(courseCreationDTO.getTitle());
         if(optionalCourse.isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Course already exists with this title");
+            throw new Exception("Course already exists with this title");
         }
 
-        Course course = courseMapper.toCourseEntity(courseDTO);
-        course.setStatus(CourseStatus.PENDING);
+        Course course = courseMapper.toCourseEntity(courseCreationDTO);
+        course.setStatus(CourseStatus.DRAFT.toString());
 
         courseRepository.save(course);
-        return ResponseEntity.ok("Course created Successfully");
+        return "Course created Successfully";
     }
 
-    public ResponseEntity<String> update(Integer courseId, CourseDTO courseDTO) {
+    public String update(Integer courseId, CourseCreationDTO courseCreationDTO) throws Exception{
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
         if(optionalCourse.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+            throw new Exception("Course not found.");
         }
 
         Course course = optionalCourse.get();
-        course.setTitle(courseDTO.getTitle());
-        course.setDescription(courseDTO.getDescription());
-        course.setCategory(courseDTO.getCategory());
-        course.setTags(courseDTO.getTags());
+        course.setTitle(courseCreationDTO.getTitle());
+        course.setDescription(courseCreationDTO.getDescription());
+        course.setCategory(courseCreationDTO.getCategory());
+        course.setTags(courseCreationDTO.getTags());
 
         courseRepository.save(course);
-        return ResponseEntity.ok("Course updated successfully");
+        return "Course updated successfully";
     }
 
-    public ResponseEntity<String> delete(int courseId) {
+    public boolean delete(int courseId) {
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
         if(optionalCourse.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
+            return false;
+//            throw new Exception ("Course not found");/
         }
 
         Course course = optionalCourse.get();
         courseRepository.delete(course);
-        return ResponseEntity.ok("Course deleted successfully");
+//        return "Course deleted successfully";
+        return true;
+    }
+
+    public List<AllCoursesDto> findAllPending() {
+
+        List<Course> courses = courseRepository.findAllPending();
+        List<AllCoursesDto> allCourses = courses.stream()
+                .map(course -> courseMapper.toCourseDto(course)).toList();
+
+        return allCourses;
+    }
+
+    public List<AllCoursesDto> findAllApproved() {
+
+        List<Course> courses = courseRepository.findAllApproved();
+        List<AllCoursesDto> allCourses = courses.stream()
+                .map(course -> courseMapper.toCourseDto(course)).toList();
+
+        return allCourses;
+    }
+
+    public String submitCourse(Integer courseId) throws Exception{
+
+        Optional<Course> optionalCourse = courseRepository.findById(courseId);
+        if(optionalCourse.isEmpty()){
+            throw new Exception("Course not found");
+        }
+        Course course = optionalCourse.get();
+        course.setStatus(CourseStatus.PENDING.toString());
+//        courseRepository.save(course);
+
+        return "Course submitted for review successfully";
+    }
+
+    public CourseDto findById(Integer courseId) throws Exception{
+
+        Optional<Course> optionalCourse = courseRepository.findById(courseId);
+        if(optionalCourse.isEmpty()){
+            throw new Exception("Course not found.");
+        }
+
+        Course course = optionalCourse.get();
+
+        return courseMapper.toFullCourseDto(course);
     }
 }

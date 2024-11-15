@@ -1,26 +1,20 @@
-package com.onlinelearning.online_learning_platform.dto;
+package com.onlinelearning.online_learning_platform.dto.course;
 
-import com.onlinelearning.online_learning_platform.enums.CourseStatus;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Tag;
-import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 @Setter
 @Getter
 @Builder // set for mapping
-public class CourseDTO {
+public class CourseCreationDTO {
 
     @NotNull(message = "Title must not be null")
     @NotBlank(message = "Title cannot be blank")
@@ -37,4 +31,6 @@ public class CourseDTO {
 
     @NotNull(message = "Category can't be null")
     private Category category;
+
+    private String image;
 }

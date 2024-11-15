@@ -58,7 +58,10 @@ public class Course {
     private LocalDate updatedAt;
 
     @Column(name = "status", nullable = false)
-    private CourseStatus status = CourseStatus.PENDING;
+    private String status;
+
+    @Column(name = "image", columnDefinition = "TEXT")
+    private String image;
 
     @NotNull(message = "Tags must not be null")
     @NotBlank(message = "Tags cannot be blank")
