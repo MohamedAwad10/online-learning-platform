@@ -4,15 +4,17 @@ import com.onlinelearning.online_learning_platform.model.usercontacts.UserContac
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
 @Getter
 @ToString
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -43,7 +45,6 @@ public class Users {
     )
     private String lastName;
 
-    @Email(message = "Email should be valid")
     @NotNull(message = "Email is required")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
             message = "Enter a correct pattern for your email")
@@ -67,9 +68,9 @@ public class Users {
 
     @Setter
     @Getter
-    @Column(name = "created_at")
+    @Column(name = "joined_date")
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDate joinedDate;
 
     @Column(name = "profile_image", columnDefinition = "TEXT")
     private String profileImage;
@@ -89,5 +90,12 @@ public class Users {
             fetch = FetchType.EAGER
     )
     private Set<UserContacts> contacts;
+
+    public void addRole(Role role){
+        if(this.roles == null){
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(role);
+    }
 
 }

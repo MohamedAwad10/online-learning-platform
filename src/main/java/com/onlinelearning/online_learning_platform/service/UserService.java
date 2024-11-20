@@ -3,7 +3,9 @@ package com.onlinelearning.online_learning_platform.service;
 import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserDto;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
+import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Users;
+import com.onlinelearning.online_learning_platform.repository.RoleRepository;
 import com.onlinelearning.online_learning_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,17 +21,13 @@ public class UserService {
 
     private UserMapper userMapper;
 
+    private RoleRepository roleRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper){
+    public UserService(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-    }
-
-
-    public List<AllUsersDto> findAll() {
-
-        List<Users> users = userRepository.findAll();
-        return users.stream().map(user -> userMapper.toUserResponseDto(user)).toList();
+        this.roleRepository = roleRepository;
     }
 
     @Transactional
@@ -39,11 +37,21 @@ public class UserService {
         if(optionalUser.isPresent()){
             throw new Exception("This email is already in use");
         }
+        Users user = userMapper.toStudentEntity(userDto);
 
-        Users user = userMapper.toUserEntity(userDto);
-        userRepository.save(user);
+        Optional<Role> optionalRole = roleRepository.findByRoleName("STUDENT");
+        user.addRole(optionalRole.orElseThrow(() -> new Exception("STUDENT role not found")));
 
-        return "User signed in successfully";
+        Users savedUser = userRepository.save(user);
+
+        return "User signed in successfully with id: " +savedUser.getId();
+    }
+
+
+    public List<AllUsersDto> findAll() {
+
+        List<Users> users = userRepository.findAll();
+        return users.stream().map(user -> userMapper.toUserResponseDto(user)).toList();
     }
 
     public String delete(Integer userId) throws Exception{

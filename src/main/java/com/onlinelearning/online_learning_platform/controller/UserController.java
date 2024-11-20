@@ -22,6 +22,11 @@ public class UserController {
         this.userService = userService;
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<?> loginUser(){
+//        return userService.login();
+//    }
+
     @GetMapping("/")
     public ResponseEntity<?> findAllUsers(){
         List<AllUsersDto> users = userService.findAll();
@@ -29,6 +34,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users");
         }
         return ResponseEntity.ok(users);
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer userId){
+        try {
+            String message = userService.delete(userId);
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PostMapping("/register")
@@ -41,24 +56,14 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable(name = "id") Integer userId){
-        try {
-            String message = userService.delete(userId);
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
-    }
-
 //    @PutMapping("/update")
 //    public ResponseEntity<String> updateUser(@RequestBody UserDto userDto){
 //
 //        return userService.update(userDto);
 //    }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> findUserById(@PathVariable(name = "id") Integer userId){
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<?> findUserById(@PathVariable Integer userId){
 //        return userService.findById(userId);
 //    }
 }

@@ -2,15 +2,15 @@ package com.onlinelearning.online_learning_platform.dto.user;
 
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
 @Setter
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
     @NotNull(message = "First name cannot be null")
@@ -23,7 +23,6 @@ public class UserDto {
     @NotBlank(message = "Last name cannot be blank")
     private String lastName;
 
-    @Email(message = "Email should be valid")
     @NotNull(message = "Email is required")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
             message = "Enter a correct pattern for your email")
@@ -36,10 +35,11 @@ public class UserDto {
                     " one lowercase letter, one number, and one special character ")
     private String password;
 
-    @NotNull(message = "Role cannot be null")
-    private Set<@NotNull(message = "Role cannot be null") @NotBlank String> roles;
+//    private Set<@NotNull(message = "Role cannot be null") @NotBlank String> roles;
 
     private Set<UserContacts> contacts;
 
     private String image;
+
+    private String birthDate;
 }
