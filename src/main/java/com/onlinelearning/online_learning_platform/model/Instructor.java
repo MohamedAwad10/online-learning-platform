@@ -1,35 +1,25 @@
 package com.onlinelearning.online_learning_platform.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.web.bind.annotation.PostMapping;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
 @Setter
 @Getter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "instructor")
-@NoArgsConstructor
 public class Instructor extends Users{
 
-    public Instructor(String bio, int yearsOfExperience){
-        this.bio = bio;
-        this.yearsOfExperience = yearsOfExperience;
-    }
-
-    @NotNull(message = "Bio is required")
-    @Column(name = "bio", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
-
     @Column(name = "years_of_experience", columnDefinition = "INT")
-    private int yearsOfExperience = 0;
+    private int yearsOfExperience;
 
     @OneToMany(
             mappedBy = "instructor",

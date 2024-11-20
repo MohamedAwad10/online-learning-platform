@@ -2,15 +2,15 @@ package com.onlinelearning.online_learning_platform.mapper;
 
 import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserDto;
+import com.onlinelearning.online_learning_platform.model.Instructor;
 import com.onlinelearning.online_learning_platform.model.Role;
+import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.model.Users;
 import com.onlinelearning.online_learning_platform.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
 
 @Component
 public class UserMapper {
@@ -27,27 +27,36 @@ public class UserMapper {
                 .fullName(user.getFirstName()+" "+user.getLastName())
                 .email(user.getEmail())
                 .image(user.getProfileImage())
-                .createdAt(user.getCreatedAt().toString())
+                .joinedDate(user.getJoinedDate().toString())
                 .roles(user.getRoles().stream().map(Role::getRoleName).toList())
                 .build();
     }
 
-    public Users toUserEntity(UserDto userDto){
+    public Student toStudentEntity(UserDto userDto){
 
-        Set<Role> rolesSet = new HashSet<>();
-        for(String role: userDto.getRoles()){
-            Optional<Role> optionalRole = roleRepository.findByRoleName(role);
-            rolesSet.add(optionalRole.get());
-        }
-
-        return Users.builder()
+        return Student.builder()
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .password(userDto.getPassword())
-                .roles(rolesSet)
                 .contacts(userDto.getContacts())
                 .profileImage(userDto.getImage())
+                .birthDate(LocalDate.parse(userDto.getBirthDate()))
+                .build();
+    }
+
+    public Instructor toInstructorEntity(Users user){
+
+        return Instructor.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .joinedDate(user.getJoinedDate())
+                .roles(user.getRoles())
+                .contacts(user.getContacts())
+                .profileImage(user.getProfileImage())
                 .build();
     }
 }
