@@ -80,7 +80,7 @@ public class CourseService {
 
         List<Course> courses = courseRepository.findAllPending();
         List<AllCoursesDto> allCourses = courses.stream()
-                .map(course -> courseMapper.toCourseDto(course)).toList();
+                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
 
         return allCourses;
     }
@@ -89,7 +89,7 @@ public class CourseService {
 
         List<Course> courses = courseRepository.findAllApproved();
         List<AllCoursesDto> allCourses = courses.stream()
-                .map(course -> courseMapper.toCourseDto(course)).toList();
+                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
 
         return allCourses;
     }

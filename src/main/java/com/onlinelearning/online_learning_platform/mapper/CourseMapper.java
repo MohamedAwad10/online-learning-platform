@@ -29,7 +29,7 @@ public class CourseMapper {
                 .build();
     }
 
-    public AllCoursesDto toCourseDto(Course course){
+    public AllCoursesDto toAllCoursesDto(Course course){
 
         return AllCoursesDto.builder()
                 .title(course.getTitle())

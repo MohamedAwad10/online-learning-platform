@@ -21,8 +21,8 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @PostMapping("/create/{instructor-id}")
-    public ResponseEntity<String> createCourse(@PathVariable(name = "instructor-id")Integer instructorId, @Valid @RequestBody CourseCreationDTO courseCreationDTO){
+    @PostMapping("/create/{instructorId}")
+    public ResponseEntity<String> createCourse(@PathVariable Integer instructorId, @Valid @RequestBody CourseCreationDTO courseCreationDTO){
         try {
             String message = courseService.insert(instructorId, courseCreationDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(message);
@@ -31,8 +31,8 @@ public class CourseController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateCourse(@PathVariable(name = "id") Integer courseId
+    @PutMapping("/update/{courseId}")
+    public ResponseEntity<String> updateCourse(@PathVariable Integer courseId
             , @Valid @RequestBody CourseCreationDTO courseCreationDTO){
         try {
             String message = courseService.update(courseId, courseCreationDTO);
@@ -42,8 +42,8 @@ public class CourseController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable(name = "id") int courseId){
+    @DeleteMapping("delete/{courseId}")
+    public ResponseEntity<String> deleteCourse(@PathVariable int courseId){
 
         if(courseService.delete(courseId)){
             return ResponseEntity.ok("Course deleted successfully");
@@ -59,8 +59,8 @@ public class CourseController {
 //        }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findCourseById(@PathVariable(name = "id") Integer courseId){
+    @GetMapping("/{courseId}")
+    public ResponseEntity<?> findCourseById(@PathVariable Integer courseId){
         try {
             CourseDto course = courseService.findById(courseId);
             return ResponseEntity.ok(course);
@@ -87,8 +87,8 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
-    @PostMapping("/submit/{id}")
-    public ResponseEntity<String> submitCourseForReview(@PathVariable(name = "id") Integer courseId){
+    @PostMapping("/submit/{courseId}")
+    public ResponseEntity<String> submitCourseForReview(@PathVariable Integer courseId){
         try {
             String message = courseService.submitCourse(courseId);
             return ResponseEntity.ok(message);
