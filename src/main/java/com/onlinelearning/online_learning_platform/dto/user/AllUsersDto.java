@@ -19,5 +19,5 @@ public class AllUsersDto {
 
     private String image;
 
-    private String createdAt;
+    private String joinedDate;
 }
