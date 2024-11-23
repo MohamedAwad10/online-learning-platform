@@ -4,26 +4,28 @@ import com.onlinelearning.online_learning_platform.model.Course;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Setter
 @Getter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "lesson")
 @IdClass(LessonID.class)
 public class Lesson {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lesson_seq")
+    @SequenceGenerator(name = "lesson_seq", sequenceName = "lesson_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
 
     @Id
     @ManyToOne(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = CascadeType.MERGE,
             fetch = FetchType.EAGER
     )
     @JoinColumn(name = "course_id")
@@ -41,10 +43,13 @@ public class Lesson {
     @NotBlank(message = "Url cannot be blank")
     @Column(
             name = "url",
-            nullable = false,
-            unique = true
+            nullable = false
     )
     private String url;
+
+    @NotNull(message = "Duration must not be null")
+    @Column(name = "duration", nullable = false)
+    private int duration;
 
     @Column(name = "completed")
     private boolean completed;
