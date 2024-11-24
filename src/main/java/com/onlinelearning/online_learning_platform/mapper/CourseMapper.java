@@ -3,6 +3,8 @@ package com.onlinelearning.online_learning_platform.mapper;
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
+import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
+import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +17,21 @@ public class CourseMapper {
 
     private ReviewMapper reviewMapper;
 
+    private LessonMapper lessonMapper;
+
     @Autowired
-    public CourseMapper(ReviewMapper reviewMapper){
+    public CourseMapper(ReviewMapper reviewMapper, LessonMapper lessonMapper){
         this.reviewMapper = reviewMapper;
+        this.lessonMapper = lessonMapper;
     }
 
-    public Course toCourseEntity(CourseCreationDTO courseCreationDTO){
+    public Course toCourseEntity(CourseCreationDTO courseCreationDTO, Category category){
+
         return Course.builder()
                 .title(courseCreationDTO.getTitle())
                 .description(courseCreationDTO.getDescription())
                 .tags(courseCreationDTO.getTags())
-                .category(courseCreationDTO.getCategory())
+                .category(category)
                 .build();
     }
 
@@ -36,18 +42,20 @@ public class CourseMapper {
                 .category(course.getCategory().getCategoryName())
                 .instructorName(course.getInstructor().getFirstName()+" "+course.getInstructor().getLastName())
                 .reviews(course.getReviews().size())
-                .lectures(course.getLessons().size())
+                .lessons(course.getLessons().size())
+                .students(course.getEnrollments().size())
                 .image(course.getImage())
                 .build();
     }
 
-    public CourseDto toFullCourseDto(Course course){
+    public CourseDto toFullCourseDto(Course course, CourseInstructorDto courseInstructorDto){
 
         return CourseDto.builder()
                 .title(course.getTitle())
                 .description(course.getDescription())
-                .instructor(course.getInstructor())
-                .lessons(course.getLessons())
+                .instructor(courseInstructorDto)
+                .lessons(course.getLessons().stream()
+                        .map(lesson -> lessonMapper.toDto(lesson)).collect(Collectors.toSet()))
                 .createdAt(course.getCreatedAt().toString())
                 .updatedAt(course.getUpdatedAt().toString())
                 .image(course.getImage())
