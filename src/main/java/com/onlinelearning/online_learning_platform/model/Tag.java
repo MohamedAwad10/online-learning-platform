@@ -27,8 +27,7 @@ public class Tag {
     @NotBlank(message = "Tag cannot be blank")
     @Column(
             name = "tag_name",
-            nullable = false,
-            unique = true
+            nullable = false
     )
     private String tagName;
 
