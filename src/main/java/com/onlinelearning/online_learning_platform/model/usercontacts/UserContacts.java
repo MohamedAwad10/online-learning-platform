@@ -13,8 +13,8 @@ import lombok.Setter;
 public class UserContacts {
 
     @Id
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "contact")
+    private String contact;
 
     @Id
     @ManyToOne(
