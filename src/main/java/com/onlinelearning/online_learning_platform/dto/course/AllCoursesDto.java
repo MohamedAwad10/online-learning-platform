@@ -17,7 +17,9 @@ public class AllCoursesDto {
 
     private int reviews;
 
-    private int lectures;
+    private int lessons;
+
+    private int students;
 
     private String image;
 }
