@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/online-learning/course")
+@RequestMapping("/api/online-learning/courses")
 public class CourseController {
 
     private CourseService courseService;
@@ -21,42 +21,36 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @PostMapping("/create/{instructorId}")
-    public ResponseEntity<String> createCourse(@PathVariable Integer instructorId, @Valid @RequestBody CourseCreationDTO courseCreationDTO){
+    @PostMapping("/{instructorId}/create")
+    public ResponseEntity<?> createCourse(@PathVariable Integer instructorId, @Valid @RequestBody CourseCreationDTO courseCreationDTO){
         try {
-            String message = courseService.insert(instructorId, courseCreationDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
+            CourseCreationDTO courseDto = courseService.insert(instructorId, courseCreationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(courseDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     @PutMapping("/update/{courseId}")
-    public ResponseEntity<String> updateCourse(@PathVariable Integer courseId
-            , @Valid @RequestBody CourseCreationDTO courseCreationDTO){
+    public ResponseEntity<?> updateCourse(@PathVariable Integer courseId
+            , @Valid @RequestBody CourseCreationDTO courseCreationDto){
         try {
-            String message = courseService.update(courseId, courseCreationDTO);
-            return ResponseEntity.ok(message);
+            CourseCreationDTO courseDto = courseService.update(courseId, courseCreationDto);
+            return ResponseEntity.ok(courseDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    @DeleteMapping("delete/{courseId}")
+    @DeleteMapping("/delete/{courseId}")
     public ResponseEntity<String> deleteCourse(@PathVariable int courseId){
 
-        if(courseService.delete(courseId)){
-            return ResponseEntity.ok("Course deleted successfully");
+        try {
+            String message = courseService.delete(courseId);
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Course not found");
-
-//        try {
-//            String message = courseService.delete(courseId);
-//            return ResponseEntity.ok(message);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
     }
 
     @GetMapping("/{courseId}")
@@ -87,7 +81,7 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
-    @PostMapping("/submit/{courseId}")
+    @PutMapping("/submit/{courseId}")
     public ResponseEntity<String> submitCourseForReview(@PathVariable Integer courseId){
         try {
             String message = courseService.submitCourse(courseId);
