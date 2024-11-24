@@ -35,8 +35,7 @@ public class Category {
 
     @OneToMany(
             mappedBy = "category",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.MERGE // test
+            fetch = FetchType.LAZY
     )
     private Set<Course> courses;
 }

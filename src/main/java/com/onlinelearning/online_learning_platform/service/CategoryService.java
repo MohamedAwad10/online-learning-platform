@@ -1,7 +1,10 @@
 package com.onlinelearning.online_learning_platform.service;
 
+import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
+import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.mapper.CategoryMapper;
+import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -17,17 +22,21 @@ public class CategoryService {
 
     private CategoryMapper categoryMapper;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper){
+    private CourseMapper courseMapper;
+
+    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper
+                           , CourseMapper courseMapper){
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
+        this.courseMapper = courseMapper;
     }
 
-    public List<CategoryDto> allCategories() {
+    public List<AllCategoriesDto> allCategories() {
 
         List<Category> categories = categoryRepository.findAll();
 
-        List<CategoryDto> allCategories = categories.stream()
-                .map(category -> categoryMapper.toDto(category)).toList();
+        List<AllCategoriesDto> allCategories = categories.stream()
+                .map(category -> categoryMapper.toAllDto(category)).toList();
 
         return allCategories;
     }
@@ -53,8 +62,10 @@ public class CategoryService {
         }
 
         Category category = optionalCategory.get();
+        Set<AllCoursesDto> allCourses = category.getCourses().stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
 
-        return categoryMapper.toDto(category);
+        return categoryMapper.toDto(category, allCourses);
     }
 
     public CategoryDto update(Integer categoryId, CategoryDto categoryDto) throws Exception{

@@ -1,5 +1,6 @@
 package com.onlinelearning.online_learning_platform.controller;
 
+import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
 import com.onlinelearning.online_learning_platform.service.CategoryService;
 import jakarta.validation.Valid;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/online-learning/categories")
@@ -24,7 +24,7 @@ public class CategoryController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCategories(){
-        List<CategoryDto> categories = categoryService.allCategories();
+        List<AllCategoriesDto> categories = categoryService.allCategories();
         if(categories.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<?> findCategoryById(@PathVariable Integer categoryId){
+    public ResponseEntity<?> getCategoryCourses(@PathVariable Integer categoryId){
         try {
             CategoryDto category = categoryService.findById(categoryId);
             return ResponseEntity.ok(category);
