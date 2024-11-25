@@ -25,20 +25,15 @@ import java.util.stream.Collectors;
 @Service
 public class InstructorService {
 
-    private UserRepository userRepository;
     private InstructorRepository instructorRepository;
     private UserMapper userMapper;
-    private RoleRepository roleRepository;
     private CourseMapper courseMapper;
 
     @Autowired
     public InstructorService(InstructorRepository instructorRepository, UserMapper userMapper
-                            , UserRepository userRepository, RoleRepository roleRepository
                             , CourseMapper courseMapper) {
         this.instructorRepository = instructorRepository;
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.courseMapper = courseMapper;
     }
 
