@@ -2,18 +2,19 @@ package com.onlinelearning.online_learning_platform.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.lang.reflect.Member;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
 @Getter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tag")
 public class Tag {
@@ -27,14 +28,11 @@ public class Tag {
     @NotBlank(message = "Tag cannot be blank")
     @Column(
             name = "tag_name",
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private String tagName;
 
-    @ManyToMany(
-            mappedBy = "tags",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY // join fetch
-    )
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private Set<Course> courses;
 }
