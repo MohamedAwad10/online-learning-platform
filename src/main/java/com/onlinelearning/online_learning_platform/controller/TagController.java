@@ -34,7 +34,7 @@ public class TagController {
     }
 
     @PostMapping("/{courseId}")
-    public ResponseEntity<?> addTagToCourse(@PathVariable Integer courseId, @RequestBody TagDto tagDto){
+    public ResponseEntity<?> addTagToCourse(@PathVariable Integer courseId,@Valid @RequestBody TagDto tagDto){
         try {
             TagDto createdTag = tagService.addTagToCourse(courseId, tagDto);
             return ResponseEntity.ok(createdTag);
