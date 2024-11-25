@@ -1,8 +1,6 @@
 package com.onlinelearning.online_learning_platform.dto.course;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
-import com.onlinelearning.online_learning_platform.model.Category;
-import com.onlinelearning.online_learning_platform.model.Tag;
+import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,9 +25,10 @@ public class CourseCreationDTO {
     private String description;
 
     @NotNull(message = "Tags must not be null")
-    private Set<Tag> tags;
+    private Set<TagDto> tags;
 
     @NotNull(message = "Category can't be null")
+    @NotBlank(message = "Category cannot be blank")
     private String category;
 
     private String image;

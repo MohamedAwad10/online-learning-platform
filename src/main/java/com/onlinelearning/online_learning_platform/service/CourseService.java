@@ -7,16 +7,15 @@ import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.enums.CourseStatus;
-import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
-import com.onlinelearning.online_learning_platform.mapper.LessonMapper;
-import com.onlinelearning.online_learning_platform.mapper.ReviewMapper;
-import com.onlinelearning.online_learning_platform.mapper.UserMapper;
+import com.onlinelearning.online_learning_platform.mapper.*;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Instructor;
+import com.onlinelearning.online_learning_platform.model.Tag;
 import com.onlinelearning.online_learning_platform.repository.CategoryRepository;
 import com.onlinelearning.online_learning_platform.repository.CourseRepository;
 import com.onlinelearning.online_learning_platform.repository.InstructorRepository;
+import com.onlinelearning.online_learning_platform.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,11 +35,14 @@ public class CourseService {
     private UserMapper userMapper;
     private LessonMapper lessonMapper;
     private ReviewMapper reviewMapper;
+    private TagMapper tagMapper;
+    private TagRepository tagRepository;
 
     @Autowired
     public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, UserMapper userMapper
             , InstructorRepository instructorRepository, CategoryRepository categoryRepository
-            , LessonMapper lessonMapper, ReviewMapper reviewMapper){
+            , LessonMapper lessonMapper, ReviewMapper reviewMapper, TagMapper tagMapper
+            , TagRepository tagRepository){
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
         this.instructorRepository = instructorRepository;
@@ -48,6 +50,8 @@ public class CourseService {
         this.userMapper = userMapper;
         this.lessonMapper = lessonMapper;
         this.reviewMapper = reviewMapper;
+        this.tagMapper = tagMapper;
+        this.tagRepository = tagRepository;
     }
 
     @Transactional
@@ -66,9 +70,14 @@ public class CourseService {
 
         Optional<Category> optionalCategory = categoryRepository
                 .findByCategoryName(courseCreationDTO.getCategory());
-        Category category = optionalCategory.orElseThrow();
+        Category category = optionalCategory.orElseThrow(() -> new RuntimeException("Category not found"));
 
-        Course course = courseMapper.toCourseEntity(courseCreationDTO, category);
+        Set<Tag> tags = courseCreationDTO.getTags().stream()
+                .map(tagDto -> tagRepository
+                        .findByTagName(tagDto.getTagName())
+                        .orElseGet(() -> tagMapper.toEntity(tagDto))).collect(Collectors.toSet());
+
+        Course course = courseMapper.toCourseEntity(courseCreationDTO, category, tags);
         course.setStatus(CourseStatus.DRAFT.toString());
         course.setInstructor(instructor);
 
@@ -77,6 +86,7 @@ public class CourseService {
         return courseCreationDTO;
     }
 
+    @Transactional
     public CourseCreationDTO update(Integer courseId, CourseCreationDTO courseCreationDTO) throws Exception{
 
         Course course = checkCourseExist(courseId);
@@ -88,7 +98,12 @@ public class CourseService {
         course.setTitle(courseCreationDTO.getTitle());
         course.setDescription(courseCreationDTO.getDescription());
         course.setCategory(category);
-        course.setTags(courseCreationDTO.getTags());
+
+        Set<Tag> tags = courseCreationDTO.getTags().stream()
+                .map(tagDto -> tagRepository
+                        .findByTagName(tagDto.getTagName())
+                        .orElseGet(() -> tagMapper.toEntity(tagDto))).collect(Collectors.toSet());
+        course.setTags(tags);
 
         courseRepository.save(course);
         return courseCreationDTO;

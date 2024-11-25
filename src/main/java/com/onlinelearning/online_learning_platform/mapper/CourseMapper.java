@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Component
 public class CourseMapper {
 
-    public Course toCourseEntity(CourseCreationDTO courseCreationDTO, Category category){
+    public Course toCourseEntity(CourseCreationDTO courseCreationDTO, Category category, Set<Tag> tags){
 
         return Course.builder()
                 .title(courseCreationDTO.getTitle())
                 .description(courseCreationDTO.getDescription())
-                .tags(courseCreationDTO.getTags())
+                .tags(tags)
                 .category(category)
                 .build();
     }
