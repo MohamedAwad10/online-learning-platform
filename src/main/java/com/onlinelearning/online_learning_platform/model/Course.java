@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -90,7 +91,7 @@ public class Course {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private Set<Lesson> lessons;
+    private List<Lesson> lessons;
 
     @OneToMany(
             mappedBy = "course",

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -30,7 +31,7 @@ public class CourseDto {
 
     private String category;
 
-    private Set<LessonDto> lessons;
+    private List<LessonDto> lessons;
 
     private Set<ReviewDto> reviews;
 

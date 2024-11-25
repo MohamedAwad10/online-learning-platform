@@ -3,9 +3,13 @@ package com.onlinelearning.online_learning_platform.service;
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
+import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
+import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.enums.CourseStatus;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
+import com.onlinelearning.online_learning_platform.mapper.LessonMapper;
+import com.onlinelearning.online_learning_platform.mapper.ReviewMapper;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Course;
@@ -19,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -28,15 +34,20 @@ public class CourseService {
     private InstructorRepository instructorRepository;
     private CategoryRepository categoryRepository;
     private UserMapper userMapper;
+    private LessonMapper lessonMapper;
+    private ReviewMapper reviewMapper;
 
     @Autowired
     public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, UserMapper userMapper
-            , InstructorRepository instructorRepository, CategoryRepository categoryRepository){
+            , InstructorRepository instructorRepository, CategoryRepository categoryRepository
+            , LessonMapper lessonMapper, ReviewMapper reviewMapper){
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
         this.instructorRepository = instructorRepository;
         this.categoryRepository = categoryRepository;
         this.userMapper = userMapper;
+        this.lessonMapper = lessonMapper;
+        this.reviewMapper = reviewMapper;
     }
 
     @Transactional
@@ -122,9 +133,16 @@ public class CourseService {
     public CourseDto findById(Integer courseId) throws Exception{
 
         Course course = checkCourseExist(courseId);
+
         CourseInstructorDto courseInstructorDto = userMapper.toCourseInstructorDto(course.getInstructor());
 
-        return courseMapper.toFullCourseDto(course, courseInstructorDto);
+        List<LessonDto> lessons = course.getLessons().stream()
+                .map(lesson -> lessonMapper.toDto(lesson)).toList();
+
+        Set<ReviewDto> reviews = course.getReviews().stream()
+                .map(review -> reviewMapper.toReviewDto(review)).collect(Collectors.toSet());
+
+        return courseMapper.toFullCourseDto(course, courseInstructorDto, lessons, reviews);
     }
 
     public Course checkCourseExist(Integer courseId) throws Exception{
