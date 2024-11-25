@@ -46,6 +46,16 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{userId}")
+    public ResponseEntity<String> addInstructorRole(@PathVariable Integer userId){
+        try {
+            String message =  userService.addInstructorRole(userId);
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody UserDto userDto){
         try {

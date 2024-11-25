@@ -67,6 +67,24 @@ public class UserService {
         return "User deleted successfully";
     }
 
+    @Transactional
+    public String addInstructorRole(Integer userId) throws Exception {
+
+        Optional<Users> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new Exception("User not found");
+        }
+        Users user = optionalUser.get();
+
+        Role instructorRole = roleRepository.findByRoleName("INSTRUCTOR")
+                .orElseThrow(() -> new Exception("INSTRUCTOR role not found"));
+
+        user.addRole(instructorRole);
+        userRepository.save(user);
+
+        return "Instructor role added successfully";
+    }
+
 //    public String update(UserDto userDto) {
 //
 //
