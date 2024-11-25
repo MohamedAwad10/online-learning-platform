@@ -23,8 +23,7 @@ public class Instructor extends Users{
 
     @OneToMany(
             mappedBy = "instructor",
-            cascade = CascadeType.MERGE, // test
-            fetch = FetchType.LAZY // Use EAGER for test
+            fetch = FetchType.EAGER // Use EAGER for test
     )
     private Set<Course> courses;
 }
