@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
+import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
@@ -145,7 +145,7 @@ public class CourseService {
         return "Course submitted for review successfully";
     }
 
-    public CourseDto findById(Integer courseId) throws Exception{
+    public FullCourseDto findById(Integer courseId) throws Exception{
 
         Course course = checkCourseExist(courseId);
 

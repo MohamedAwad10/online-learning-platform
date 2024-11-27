@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Builder
-public class CourseDto {
+public class FullCourseDto {
 
     private String title;
 

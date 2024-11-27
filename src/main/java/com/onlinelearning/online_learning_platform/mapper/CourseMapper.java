@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.mapper;
 
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
+import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
 import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
@@ -10,7 +10,6 @@ import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -43,10 +42,10 @@ public class CourseMapper {
                 .build();
     }
 
-    public CourseDto toFullCourseDto(Course course, CourseInstructorDto courseInstructorDto
+    public FullCourseDto toFullCourseDto(Course course, CourseInstructorDto courseInstructorDto
             , List<LessonDto> lessonsDto, Set<ReviewDto> reviews){
 
-        return CourseDto.builder()
+        return FullCourseDto.builder()
                 .title(course.getTitle())
                 .description(course.getDescription())
                 .instructor(courseInstructorDto)

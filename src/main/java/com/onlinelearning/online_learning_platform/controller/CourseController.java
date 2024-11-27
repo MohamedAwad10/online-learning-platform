@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
+import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
 import com.onlinelearning.online_learning_platform.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -56,7 +56,7 @@ public class CourseController {
     @GetMapping("/{courseId}")
     public ResponseEntity<?> findCourseById(@PathVariable Integer courseId){
         try {
-            CourseDto course = courseService.findById(courseId);
+            FullCourseDto course = courseService.findById(courseId);
             return ResponseEntity.ok(course);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
