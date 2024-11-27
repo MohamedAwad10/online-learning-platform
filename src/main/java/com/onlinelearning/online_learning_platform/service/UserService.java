@@ -76,6 +76,10 @@ public class UserService {
         }
         Users user = optionalUser.get();
 
+        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("INSTRUCTOR"))){
+            throw new Exception("User already has instructor role, redirect him to instructor page.");
+        }
+
         Role instructorRole = roleRepository.findByRoleName("INSTRUCTOR")
                 .orElseThrow(() -> new Exception("INSTRUCTOR role not found"));
 
