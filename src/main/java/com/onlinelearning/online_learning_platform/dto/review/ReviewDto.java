@@ -13,8 +13,8 @@ import lombok.Setter;
 public class ReviewDto {
 
     @NotNull(message = "Rating must not be null")
-    @Min(value = 1, message = "Rate must greater than or equal 1")
-    @Max(value = 5, message = "Rate must lower than or equal 5")
+    @Min(value = 1, message = "Rate must greater than or equal to 1")
+    @Max(value = 5, message = "Rate must lower than or equal to 5")
     private Double rate;
 
     private String comment;

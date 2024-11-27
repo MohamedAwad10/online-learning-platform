@@ -4,24 +4,24 @@ import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.context.annotation.Primary;
-
 import java.time.LocalDate;
 
 @Setter
 @Getter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "review")
 @IdClass(ReviewID.class)
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_seq")
+    @SequenceGenerator(name = "review_seq", sequenceName = "review_seq", allocationSize = 1)
     @Column(name = "id")
     private Integer id;
 
@@ -39,7 +39,7 @@ public class Review {
     @Column(
             name = "rate",
             nullable = (false),
-            columnDefinition = "Decimal(10, 1)"
+            columnDefinition = "Decimal(2, 1)"
     )
     private Double rate;
 

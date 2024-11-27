@@ -16,4 +16,12 @@ public class ReviewMapper {
                 .student(review.getStudent().getFirstName()+" "+review.getStudent().getLastName())
                 .build();
     }
+
+    public Review toEntity(ReviewDto reviewDto){
+
+        return Review.builder()
+                .rate(reviewDto.getRate())
+                .comment(reviewDto.getComment())
+                .build();
+    }
 }

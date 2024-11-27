@@ -1,6 +1,7 @@
 package com.onlinelearning.online_learning_platform.model;
 
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
+import com.onlinelearning.online_learning_platform.model.review.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,4 +27,11 @@ public class Student extends Users{
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
     private Set<Enrollment> enrollments;
+
+    @OneToOne(
+            mappedBy = "student",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE
+    )
+    private Review review;
 }
