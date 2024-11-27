@@ -1,8 +1,6 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.dto.course.CourseDto;
 import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
 import com.onlinelearning.online_learning_platform.service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
