@@ -53,13 +53,37 @@ public class CourseController {
         }
     }
 
-    @GetMapping("/{courseId}")
+    @GetMapping("/course/{courseId}")
     public ResponseEntity<?> findCourseById(@PathVariable Integer courseId){
         try {
             FullCourseDto course = courseService.findById(courseId);
             return ResponseEntity.ok(course);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{courseId}/enroll/{studentId}")
+    public ResponseEntity<?> enrollInCourse(@PathVariable Integer courseId, @PathVariable Integer studentId){
+        try{
+            String message = courseService.enrollIn(courseId, studentId);
+            return ResponseEntity.ok(message);
+        } catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/{studentId}")
+    public ResponseEntity<?> findMyEnrolledCourses(@PathVariable Integer studentId){
+        try{
+            List<AllCoursesDto> courses = courseService.findAllEnrolledCourses(studentId);
+            if(courses.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
+            }
+
+            return ResponseEntity.ok(courses);
+        } catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
         }
     }
 
