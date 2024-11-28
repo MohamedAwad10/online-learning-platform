@@ -13,6 +13,8 @@ import lombok.*;
 @AllArgsConstructor
 public class AllCategoriesDto {
 
+    private Integer id;
+
     @NotNull(message = "Category name is Required")
     @NotBlank(message = "Category name cannot be blank")
     @Size(min = 2, message = "Category name length must be greater than 1 character")

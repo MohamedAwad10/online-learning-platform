@@ -9,6 +9,8 @@ import lombok.Setter;
 @Builder
 public class AllCoursesDto {
 
+    private Integer id;
+
     private String title;
 
     private String category;

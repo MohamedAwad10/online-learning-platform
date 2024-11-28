@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReviewMapper {
 
-    public ReviewDto toReviewDto(Review review){
+    public ReviewDto toDto(Review review){
 
         return ReviewDto.builder()
+                .id(review.getId())
                 .rate(review.getRate())
                 .comment(review.getComment())
                 .createdAt(review.getCreatedAt().toString())

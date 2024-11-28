@@ -9,6 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class InstructorCoursesDto {
 
+    private Integer id;
+
     private String title;
 
     private String status;

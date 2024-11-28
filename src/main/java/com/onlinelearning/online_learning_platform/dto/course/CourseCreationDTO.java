@@ -1,5 +1,6 @@
 package com.onlinelearning.online_learning_platform.dto.course;
 
+import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,8 @@ import java.util.Set;
 @Builder // set for mapping
 public class CourseCreationDTO {
 
+    private Integer id;
+
     @NotNull(message = "Title must not be null")
     @NotBlank(message = "Title cannot be blank")
     @Size(min = 7, message = "Title must be at least 7 characters")
@@ -28,8 +31,9 @@ public class CourseCreationDTO {
     private Set<TagDto> tags;
 
     @NotNull(message = "Category can't be null")
-    @NotBlank(message = "Category cannot be blank")
-    private String category;
+    private CategoryWithoutCoursesDto category;
 
     private String image;
+
+    private String createdAt;
 }

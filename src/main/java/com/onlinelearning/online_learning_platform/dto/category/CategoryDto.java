@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -15,6 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDto {
+
+    private Integer id;
 
     @NotNull(message = "Category name is Required")
     @NotBlank(message = "Category name cannot be blank")

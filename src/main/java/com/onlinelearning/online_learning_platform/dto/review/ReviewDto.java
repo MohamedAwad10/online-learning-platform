@@ -12,6 +12,8 @@ import lombok.Setter;
 @Builder
 public class ReviewDto {
 
+    private Integer id;
+
     @NotNull(message = "Rating must not be null")
     @Min(value = 1, message = "Rate must greater than or equal to 1")
     @Max(value = 5, message = "Rate must lower than or equal to 5")

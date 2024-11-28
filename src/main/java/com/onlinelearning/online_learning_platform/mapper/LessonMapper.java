@@ -9,6 +9,7 @@ public class LessonMapper {
 
     public LessonDto toDto(Lesson lesson){
         return LessonDto.builder()
+                .id(lesson.getId())
                 .title(lesson.getTitle())
                 .url(lesson.getUrl())
                 .duration(lesson.getDuration())

@@ -1,5 +1,6 @@
 package com.onlinelearning.online_learning_platform.dto.course;
 
+import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
@@ -15,6 +16,8 @@ import java.util.Set;
 @Builder
 public class FullCourseDto {
 
+    private Integer id;
+
     private String title;
 
     private String description;
@@ -29,7 +32,7 @@ public class FullCourseDto {
 
     private CourseInstructorDto instructor;
 
-    private String category;
+    private CategoryWithoutCoursesDto category;
 
     private List<LessonDto> lessons;
 

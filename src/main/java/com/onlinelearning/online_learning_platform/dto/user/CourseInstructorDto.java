@@ -13,13 +13,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class CourseInstructorDto {
 
+    private Integer id;
+
     private String fullName;
 
     private String bio;
 
     private int yearsOfExperience;
 
-    private Set<UserContacts> contacts;
+    private Set<UserContactDto> contacts;
 
     private String image;
 }

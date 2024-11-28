@@ -11,6 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 public class LessonDto {
 
+    private Integer id;
+
     @NotNull(message = "Title must not be null")
     @NotBlank(message = "Title cannot be blank")
     private String title;

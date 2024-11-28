@@ -11,6 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 public class TagDto {
 
+    private Integer id;
+
     @NotNull(message = "Tag name cannot be null")
     @NotBlank(message = "Tag name cannot be blank")
     private String tagName;
