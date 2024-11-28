@@ -3,19 +3,14 @@ package com.onlinelearning.online_learning_platform.service;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Instructor;
-import com.onlinelearning.online_learning_platform.model.Role;
-import com.onlinelearning.online_learning_platform.model.Users;
 import com.onlinelearning.online_learning_platform.repository.InstructorRepository;
-import com.onlinelearning.online_learning_platform.repository.RoleRepository;
-import com.onlinelearning.online_learning_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +39,10 @@ public class InstructorService {
         Set<AllCoursesDto> allCourses = instructor.getCourses().stream()
                 .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
 
-        return userMapper.toInstructorDto(instructor, allCourses);
+        Set<UserContactDto> contactDtos = instructor.getContacts().stream()
+                .map(contact -> userMapper.toUserContactDto(contact)).collect(Collectors.toSet());
+
+        return userMapper.toInstructorDto(instructor, allCourses, contactDtos);
     }
 
     public List<InstructorCoursesDto> getAllCourses(Integer instructorId) throws Exception{

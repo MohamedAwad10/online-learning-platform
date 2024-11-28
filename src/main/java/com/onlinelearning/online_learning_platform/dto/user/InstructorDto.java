@@ -16,7 +16,7 @@ public class InstructorDto extends CourseInstructorDto{
 
     private long totalStudents;
 
-    private long reviews;
+    private long totalReviews;
 
     private Set<AllCoursesDto> courses;
 }
