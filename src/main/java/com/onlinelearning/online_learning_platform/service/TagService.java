@@ -34,9 +34,10 @@ public class TagService {
         return tags.stream().map(tag -> tagMapper.toDto(tag)).toList();
     }
 
-    public List<String> searchTags(TagDto tagDto){
+    public List<TagDto> searchTags(TagDto tagDto){
 
-        return tagRepository.searchByTagName(tagDto.getTagName());
+        List<Tag> tags = tagRepository.searchByTagName(tagDto.getTagName());
+        return tags.stream().map(tag -> tagMapper.toDto(tag)).toList();
     }
 
     @Transactional
