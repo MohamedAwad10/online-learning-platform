@@ -24,7 +24,7 @@ public class Student extends Users{
     @OneToMany(
             mappedBy = "student",
             fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+            cascade = CascadeType.REMOVE
     )
     private Set<Enrollment> enrollments;
 
