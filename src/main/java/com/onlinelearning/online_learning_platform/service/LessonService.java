@@ -71,9 +71,9 @@ public class LessonService {
         lesson.setUrl(lessonDto.getUrl());
         lesson.setDuration(lessonDto.getDuration());
 
-        lessonRepository.save(lesson);
+        Lesson updatedLesson = lessonRepository.save(lesson);
 
-        return lessonDto;
+        return lessonMapper.toDto(updatedLesson);
     }
 
     public String delete(Integer courseId, Integer lessonId) throws Exception{
@@ -85,7 +85,7 @@ public class LessonService {
 
         lessonRepository.delete(lesson);
 
-        return "Lesson deleted successfully";
+        return "Lesson deleted successfully with ID: "+ lesson.getId();
     }
 
     public Course checkCourseExist(Integer courseId) throws Exception{
