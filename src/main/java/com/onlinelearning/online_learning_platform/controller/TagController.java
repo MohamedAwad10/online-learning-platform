@@ -46,7 +46,7 @@ public class TagController {
     @GetMapping("/search")
     public ResponseEntity<?> searchTagsByTagName(@Valid @RequestBody TagDto tagDto){
         try {
-            List<String> tags = tagService.searchTags(tagDto);
+            List<TagDto> tags = tagService.searchTags(tagDto);
             return ResponseEntity.ok(tags);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
