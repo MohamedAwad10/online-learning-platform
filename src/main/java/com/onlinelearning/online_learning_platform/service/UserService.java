@@ -2,9 +2,11 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Users;
+import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import com.onlinelearning.online_learning_platform.repository.RoleRepository;
 import com.onlinelearning.online_learning_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -56,15 +59,32 @@ public class UserService {
 
     public String delete(Integer userId) throws Exception{
 
-        Optional<Users> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isEmpty()){
-            throw new Exception("User not found");
-        }
-
-        Users user = optionalUser.get();
+        Users user = checkUserExist(userId);
         userRepository.delete(user);
 
         return "User deleted successfully";
+    }
+
+    @Transactional
+    public String update(UserUpdateDto userDto, Integer userId) throws Exception{
+
+        Users user = checkUserExist(userId);
+
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setPassword(userDto.getPassword());
+        user.setContacts(userDto.getContacts()
+                .stream().map(userContactDto -> {
+                            UserContacts contact = userMapper.toUserContactsEntity(userContactDto);
+                            contact.setUser(user);
+                            return contact;
+                        })
+                .collect(Collectors.toSet()));
+        user.setProfileImage(userDto.getImage());
+
+        userRepository.save(user);
+
+        return "User Updated Successfully with ID: "+user.getId();
     }
 
     @Transactional
@@ -89,10 +109,14 @@ public class UserService {
         return "Instructor role added successfully";
     }
 
-//    public String update(UserDto userDto) {
-//
-//
-//    }
+    public Users checkUserExist(Integer userId) throws Exception{
+        Optional<Users> optionalUser = userRepository.findById(userId);
+        if(optionalUser.isEmpty()){
+            throw new Exception("User not found");
+        }
+
+        return optionalUser.get();
+    }
 
 //    public ResponseEntity<?> findById(Integer userId) {
 //

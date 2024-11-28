@@ -1,6 +1,5 @@
 package com.onlinelearning.online_learning_platform.dto.user;
 
-import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Builder
-public class UserUpdatedDto {
+public class UserUpdateDto {
 
     @NotNull(message = "First name cannot be null")
     @Size(min = 3, max = 20, message = "First name must be between 3 and 20 character")
@@ -31,7 +30,7 @@ public class UserUpdatedDto {
                     " one lowercase letter, one number, and one special character ")
     private String password;
 
-    private Set<UserContacts> contacts;
+    private Set<UserContactDto> contacts;
 
     private String image;
 

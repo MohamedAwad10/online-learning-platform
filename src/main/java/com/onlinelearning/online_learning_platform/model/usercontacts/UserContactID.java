@@ -12,6 +12,6 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class UserContactID implements Serializable {
 
-    private String phone;
+    private String contact;
     private Users user;
 }

@@ -2,12 +2,14 @@ package com.onlinelearning.online_learning_platform.model.usercontacts;
 
 import com.onlinelearning.online_learning_platform.model.Users;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_contact_info")
 @IdClass(UserContacts.class)
 public class UserContacts {
@@ -18,7 +20,6 @@ public class UserContacts {
 
     @Id
     @ManyToOne(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY
     )
     @JoinColumn(name = "user_id")

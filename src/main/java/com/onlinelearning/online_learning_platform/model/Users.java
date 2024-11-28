@@ -85,7 +85,6 @@ public class Users {
 
     @OneToMany(
             mappedBy = "user",
-            orphanRemoval = true,
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )

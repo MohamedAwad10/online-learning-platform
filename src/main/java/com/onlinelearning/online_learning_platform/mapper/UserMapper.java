@@ -1,14 +1,12 @@
 package com.onlinelearning.online_learning_platform.mapper;
 
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
-import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
-import com.onlinelearning.online_learning_platform.dto.user.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.*;
 import com.onlinelearning.online_learning_platform.model.Instructor;
 import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.model.Users;
+import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import com.onlinelearning.online_learning_platform.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +35,6 @@ public class UserMapper {
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .password(userDto.getPassword())
-                .contacts(userDto.getContacts())
                 .profileImage(userDto.getImage())
                 .birthDate(LocalDate.parse(userDto.getBirthDate()))
                 .build();
@@ -58,17 +55,19 @@ public class UserMapper {
                 .build();
     }
 
-    public CourseInstructorDto toCourseInstructorDto(Instructor instructor){
+    public CourseInstructorDto toCourseInstructorDto(Instructor instructor, Set<UserContactDto> contactDtos){
         return CourseInstructorDto.builder()
+                .id(instructor.getId())
                 .fullName(instructor.getFirstName()+" "+instructor.getLastName())
                 .bio(instructor.getBio())
                 .yearsOfExperience(instructor.getYearsOfExperience())
-                .contacts(instructor.getContacts())
+                .contacts(contactDtos)
                 .image(instructor.getProfileImage())
                 .build();
     }
 
-    public InstructorDto toInstructorDto(Instructor instructor, Set<AllCoursesDto> allCourses){
+    public InstructorDto toInstructorDto(Instructor instructor
+            , Set<AllCoursesDto> allCourses, Set<UserContactDto> contacts){
 
         long totalEnrolledStudents = instructor.getCourses()
                 .stream()
@@ -81,14 +80,27 @@ public class UserMapper {
                 .sum();
 
         return InstructorDto.builder()
+                .id(instructor.getId())
                 .fullName(instructor.getFirstName()+" "+instructor.getLastName())
                 .bio(instructor.getBio())
                 .yearsOfExperience(instructor.getYearsOfExperience())
                 .courses(allCourses)
                 .totalStudents(totalEnrolledStudents)
-                .reviews(totalReviews)
-                .contacts(instructor.getContacts())
+                .totalReviews(totalReviews)
+                .contacts(contacts)
                 .image(instructor.getProfileImage())
+                .build();
+    }
+
+    public UserContactDto toUserContactDto(UserContacts userContacts){
+        return UserContactDto.builder()
+                .contact(userContacts.getContact())
+                .build();
+    }
+
+    public UserContacts toUserContactsEntity(UserContactDto userContactDto){
+        return UserContacts.builder()
+                .contact(userContactDto.getContact())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +67,17 @@ public class UserController {
         }
     }
 
-//    @PutMapping("/update")
-//    public ResponseEntity<String> updateUser(@RequestBody UserDto userDto){
-//
-//        return userService.update(userDto);
-//    }
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
+
+        try {
+            String message = userService.update(userDto, userId);;
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
 
 //    @GetMapping("/{userId}")
 //    public ResponseEntity<?> findUserById(@PathVariable Integer userId){

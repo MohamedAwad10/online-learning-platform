@@ -35,10 +35,6 @@ public class UserDto {
                     " one lowercase letter, one number, and one special character ")
     private String password;
 
-//    private Set<@NotNull(message = "Role cannot be null") @NotBlank String> roles;
-
-    private Set<UserContacts> contacts;
-
     private String image;
 
     private String birthDate;
