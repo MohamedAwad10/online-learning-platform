@@ -2,13 +2,13 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.mapper.CategoryMapper;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.repository.CategoryRepository;
 import com.onlinelearning.online_learning_platform.repository.CourseRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +44,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDto create(CategoryDto categoryDto) throws Exception{
+    public CategoryWithoutCoursesDto create(CategoryDto categoryDto) throws Exception{
 
         Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryDto.getName());
         if(optionalCategory.isPresent()){
@@ -52,9 +52,9 @@ public class CategoryService {
         }
 
         Category category = categoryMapper.toEntity(categoryDto);
-        categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
 
-        return categoryDto;
+        return categoryMapper.toCategoryWithoutCoursesDto(savedCategory);
     }
 
     public CategoryDto findById(Integer categoryId) throws Exception{
@@ -70,18 +70,24 @@ public class CategoryService {
 
         Category category = checkCategoryExist(categoryId);
         category.setCategoryName(categoryDto.getName());
-        categoryRepository.save(category);
+        Category updatedCategory = categoryRepository.save(category);
+        Set<AllCoursesDto> allCourses = updatedCategory.getCourses().stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
 
-        return categoryDto;
+        return categoryMapper.toDto(updatedCategory, allCourses);
     }
 
     @Transactional
     public String delete(Integer categoryId) throws Exception{
 
         Category category = checkCategoryExist(categoryId);
-        categoryRepository.disassociateCoursesFromCategory(categoryId);
+
+        Category dummyCategory = categoryRepository.findByCategoryName("Uncategorized")
+                .orElseThrow(() -> new RuntimeException("Dummy category not found. Please create an 'Uncategorized' category."));
+
+        categoryRepository.updateCategoryForCourse(categoryId, dummyCategory.getId());
         categoryRepository.delete(category);
-        return "Category deleted successfully";
+        return "Category deleted successfully with ID: "+ category.getId();
     }
 
     public Category checkCategoryExist(Integer categoryId) throws Exception{

@@ -2,6 +2,7 @@ package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
 import com.onlinelearning.online_learning_platform.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class CategoryController {
     @PostMapping("/create")
     public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDto categoryDto){
         try {
-            CategoryDto category = categoryService.create(categoryDto);
+            CategoryWithoutCoursesDto category = categoryService.create(categoryDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(category);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
