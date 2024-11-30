@@ -21,35 +21,26 @@ public class TagController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllTags(){
-        try {
-            List<TagDto> tags = tagService.getAll();
-            if(tags.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-            }
 
-            return ResponseEntity.ok(tags);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        List<TagDto> tags = tagService.getAll();
+        if(tags.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
+
+        return ResponseEntity.ok(tags);
     }
 
     @PostMapping("/{courseId}")
     public ResponseEntity<?> addTagToCourse(@PathVariable Integer courseId,@Valid @RequestBody TagDto tagDto){
-        try {
-            TagDto createdTag = tagService.addTagToCourse(courseId, tagDto);
-            return ResponseEntity.ok(createdTag);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        TagDto createdTag = tagService.addTagToCourse(courseId, tagDto);
+        return ResponseEntity.ok(createdTag);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> searchTagsByTagName(@Valid @RequestBody TagDto tagDto){
-        try {
-            List<TagDto> tags = tagService.searchTags(tagDto);
-            return ResponseEntity.ok(tags);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        List<TagDto> tags = tagService.searchTags(tagDto);
+        return ResponseEntity.ok(tags);
     }
 }

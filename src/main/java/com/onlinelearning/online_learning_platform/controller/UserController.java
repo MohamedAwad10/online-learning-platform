@@ -29,7 +29,7 @@ public class UserController {
 //    }
 
     @GetMapping("/")
-    public ResponseEntity<?> findAllUsers(){
+    public ResponseEntity<?> findAllUsers() {
         List<AllUsersDto> users = userService.findAll();
         if(users.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users");
@@ -39,44 +39,30 @@ public class UserController {
 
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer userId){
-        try {
-            String message = userService.delete(userId);
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        String message = userService.delete(userId);
+        return ResponseEntity.ok(message);
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<String> addInstructorRole(@PathVariable Integer userId){
-        try {
-            String message =  userService.addInstructorRole(userId);
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        String message =  userService.addInstructorRole(userId);
+        return ResponseEntity.ok(message);
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody UserDto userDto){
-        try {
-            String message = userService.register(userDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        String message = userService.register(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
 
-        try {
-            String message = userService.update(userDto, userId);;
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        String message = userService.update(userDto, userId);;
+        return ResponseEntity.ok(message);
     }
 
 //    @GetMapping("/{userId}")

@@ -1,11 +1,12 @@
 package com.onlinelearning.online_learning_platform.service;
 
+import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
+import com.onlinelearning.online_learning_platform.exception.LessonNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.LessonMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.lesson.LessonID;
-import com.onlinelearning.online_learning_platform.repository.CourseRepository;
 import com.onlinelearning.online_learning_platform.repository.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,27 +22,27 @@ public class LessonService {
 
     private LessonMapper lessonMapper;
 
-    private CourseRepository courseRepository;
+    private Commons commons;
 
     @Autowired
-    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, CourseRepository courseRepository){
+    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, Commons commons){
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
-        this.courseRepository = courseRepository;
+        this.commons = commons;
     }
 
-    public List<LessonDto> getAll(Integer courseId) throws Exception{
+    public List<LessonDto> getAll(Integer courseId) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
         List<LessonDto> lessons = course.getLessons().stream()
                 .map(lesson -> lessonMapper.toDto(lesson)).toList();
 
         return lessons;
     }
 
-    public LessonDto getById(Integer courseId, Integer lessonId) throws Exception{
+    public LessonDto getById(Integer courseId, Integer lessonId) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
         Lesson lesson = checkLessonExist(lessonKey);
 
@@ -49,9 +50,9 @@ public class LessonService {
     }
 
     @Transactional
-    public LessonDto insert(Integer courseId, LessonDto lessonDto) throws Exception{
+    public LessonDto insert(Integer courseId, LessonDto lessonDto) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
 
         Lesson lesson = lessonMapper.toEntity(lessonDto);
         lesson.setCourse(course);
@@ -60,9 +61,9 @@ public class LessonService {
         return lessonMapper.toDto(savedLesson);
     }
 
-    public LessonDto update(Integer courseId, Integer lessonId, LessonDto lessonDto) throws Exception{
+    public LessonDto update(Integer courseId, Integer lessonId, LessonDto lessonDto) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
 
         Lesson lesson = checkLessonExist(lessonKey);
@@ -76,9 +77,9 @@ public class LessonService {
         return lessonMapper.toDto(updatedLesson);
     }
 
-    public String delete(Integer courseId, Integer lessonId) throws Exception{
+    public String delete(Integer courseId, Integer lessonId) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
 
         LessonID lessonKey = new LessonID(lessonId, course);
         Lesson lesson = checkLessonExist(lessonKey);
@@ -88,19 +89,10 @@ public class LessonService {
         return "Lesson deleted successfully with ID: "+ lesson.getId();
     }
 
-    public Course checkCourseExist(Integer courseId) throws Exception{
-        Optional<Course> optionalCourse = courseRepository.findById(courseId);
-        if(optionalCourse.isEmpty()){
-            throw new Exception("Course not found");
-        }
-
-        return optionalCourse.get();
-    }
-
-    public Lesson checkLessonExist(LessonID lessonId) throws Exception{
+    public Lesson checkLessonExist(LessonID lessonId) {
         Optional<Lesson> optionalLesson = lessonRepository.findById(lessonId);
         if(optionalLesson.isEmpty()){
-            throw new Exception("Lesson not found");
+            throw new LessonNotFoundException("Lesson not found");
         }
 
         return optionalLesson.get();

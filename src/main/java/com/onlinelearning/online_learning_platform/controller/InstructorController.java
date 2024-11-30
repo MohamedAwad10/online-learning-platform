@@ -24,42 +24,31 @@ public class InstructorController {
 
     @GetMapping
     public ResponseEntity<?> getInstructorById(@PathVariable Integer instructorId){
-        try {
-            InstructorDto instructor =  instructorService.getById(instructorId);
-            return ResponseEntity.ok(instructor);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        InstructorDto instructor =  instructorService.getById(instructorId);
+        return ResponseEntity.ok(instructor);
     }
 
     @GetMapping("courses/")
     public ResponseEntity<?> getAllInstructorCourses(@PathVariable Integer instructorId){
 
-        try {
-            List<InstructorCoursesDto> allInstructorCourses = instructorService.getAllCourses(instructorId);
-            if(allInstructorCourses.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-            }
-
-            return ResponseEntity.ok(allInstructorCourses);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        List<InstructorCoursesDto> allInstructorCourses = instructorService.getAllCourses(instructorId);
+        if(allInstructorCourses.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
+
+        return ResponseEntity.ok(allInstructorCourses);
     }
 
     @GetMapping("search/")
     public ResponseEntity<?> searchInstructorCourses(@PathVariable Integer instructorId
             , @RequestParam String keyword){
 
-        try {
-            Set<InstructorCoursesDto> courses = instructorService.searchCourses(instructorId, keyword);
-            if(courses.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No results found");
-            }
-
-            return ResponseEntity.ok(courses);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        Set<InstructorCoursesDto> courses = instructorService.searchCourses(instructorId, keyword);
+        if(courses.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No results found");
         }
+
+        return ResponseEntity.ok(courses);
     }
 }

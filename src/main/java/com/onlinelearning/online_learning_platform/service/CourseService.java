@@ -10,6 +10,10 @@ import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
 import com.onlinelearning.online_learning_platform.enums.CourseStatus;
+import com.onlinelearning.online_learning_platform.exception.CategoryException;
+import com.onlinelearning.online_learning_platform.exception.CourseException;
+import com.onlinelearning.online_learning_platform.exception.EnrollmentException;
+import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.*;
 import com.onlinelearning.online_learning_platform.model.*;
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
@@ -60,22 +64,22 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseCreationDTO insert(Integer instructorId, CourseCreationDTO courseCreationDTO) throws Exception{
+    public CourseCreationDTO insert(Integer instructorId, CourseCreationDTO courseCreationDTO) {
 
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         if(optionalInstructor.isEmpty()){
-            throw new Exception("Instructor not found");
+            throw new UserNotFoundException("Instructor not found");
         }
         Instructor instructor = optionalInstructor.get();
 
         Optional<Course> optionalCourse = courseRepository.findByTitle(courseCreationDTO.getTitle());
         if(optionalCourse.isPresent()){
-            throw new Exception("Course already exists with this title");
+            throw new CourseException("Course already exists with this title");
         }
 
         Category category = categoryRepository
                 .findByCategoryName(courseCreationDTO.getCategory().getName())
-                .orElseThrow(() -> new RuntimeException("Category not found"));;
+                .orElseThrow(() -> new CategoryException("Category not found"));;
 
         Set<Tag> tags = courseCreationDTO.getTags().stream()
                 .map(tagDto -> tagRepository
@@ -93,13 +97,13 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseCreationDTO update(Integer courseId, CourseCreationDTO courseCreationDTO) throws Exception{
+    public CourseCreationDTO update(Integer courseId, CourseCreationDTO courseCreationDTO) {
 
         Course course = common.checkCourseExist(courseId);
 
-        Optional<Category> optionalCategory = categoryRepository
-                .findByCategoryName(courseCreationDTO.getCategory().getName());
-        Category category = optionalCategory.orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = categoryRepository
+                .findByCategoryName(courseCreationDTO.getCategory().getName())
+                .orElseThrow(() -> new CategoryException("Category not found"));
 
         course.setTitle(courseCreationDTO.getTitle());
         course.setDescription(courseCreationDTO.getDescription());
@@ -117,7 +121,7 @@ public class CourseService {
                 (updatedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryDtoWithoutCourses(category));
     }
 
-    public String delete(int courseId) throws Exception{
+    public String delete(int courseId) {
 
         Course course = common.checkCourseExist(courseId);
         courseRepository.delete(course);
@@ -126,7 +130,7 @@ public class CourseService {
     }
 
     @Transactional
-    public String enrollIn(Integer courseId, Integer studentId) throws Exception{
+    public String enrollIn(Integer courseId, Integer studentId) {
 
         Course course = checkApprovedCourseExist(courseId);
         Student student = common.checkStudentExist(studentId);
@@ -134,7 +138,7 @@ public class CourseService {
         EnrollmentID enrollmentID = new EnrollmentID(student, course);
         Optional<Enrollment> optionalEnrollment = enrollmentRepository.findById(enrollmentID);
         if(optionalEnrollment.isPresent()){
-            throw new RuntimeException("You are already enrolled in this course");
+            throw new EnrollmentException("You are already enrolled in this course");
         }
 
         Enrollment enrollment = new Enrollment();
@@ -145,7 +149,7 @@ public class CourseService {
         return "Enrolled in successfully in Course with ID: "+ course.getId();
     }
 
-    public List<AllCoursesDto> findAllEnrolledCourses(Integer studentId) throws Exception{
+    public List<AllCoursesDto> findAllEnrolledCourses(Integer studentId) {
 
         Student student = common.checkStudentExist(studentId);
         List<Course> courses = student.getEnrollments().stream().map(Enrollment::getCourse).toList();
@@ -171,7 +175,7 @@ public class CourseService {
         return allCourses;
     }
 
-    public String submitCourse(Integer courseId) throws Exception{
+    public String submitCourse(Integer courseId) {
 
         Course course = common.checkCourseExist(courseId);
 
@@ -181,7 +185,7 @@ public class CourseService {
         return "Course submitted for review successfully";
     }
 
-    public FullCourseDto findById(Integer courseId) throws Exception{
+    public FullCourseDto findById(Integer courseId) {
 
         Course course = common.checkCourseExist(courseId);
 
@@ -202,11 +206,11 @@ public class CourseService {
         return courseMapper.toFullCourseDto(course, courseInstructorDto, lessons, reviews, categoryDto);
     }
 
-    public Course checkApprovedCourseExist(Integer courseId) throws Exception{
+    public Course checkApprovedCourseExist(Integer courseId) {
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
         if(optionalCourse.isEmpty() || !optionalCourse.get().getStatus().equals("APPROVED")){
-            throw new Exception("Course not found");
+            throw new CourseException("Course not found");
         }
 
         return optionalCourse.get();

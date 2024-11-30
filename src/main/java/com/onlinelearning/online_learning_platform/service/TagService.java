@@ -1,6 +1,8 @@
 package com.onlinelearning.online_learning_platform.service;
 
+import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
+import com.onlinelearning.online_learning_platform.exception.TagAlreadyExistException;
 import com.onlinelearning.online_learning_platform.mapper.TagMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Tag;
@@ -22,28 +24,32 @@ public class TagService {
 
     private TagMapper tagMapper;
 
-    public TagService(TagRepository tagRepository, CourseRepository courseRepository, TagMapper tagMapper){
+    private Commons commons;
+
+    public TagService(TagRepository tagRepository, CourseRepository courseRepository
+            , TagMapper tagMapper, Commons commons) {
         this.tagRepository = tagRepository;
         this.courseRepository = courseRepository;
         this.tagMapper = tagMapper;
+        this.commons = commons;
     }
 
-    public List<TagDto> getAll() throws Exception{
+    public List<TagDto> getAll() {
 
         List<Tag> tags = tagRepository.findAll();
         return tags.stream().map(tag -> tagMapper.toDto(tag)).toList();
     }
 
-    public List<TagDto> searchTags(TagDto tagDto){
+    public List<TagDto> searchTags(TagDto tagDto) {
 
         List<Tag> tags = tagRepository.searchByTagName(tagDto.getTagName());
         return tags.stream().map(tag -> tagMapper.toDto(tag)).toList();
     }
 
     @Transactional
-    public TagDto addTagToCourse(Integer courseId, TagDto tagDto) throws Exception{
+    public TagDto addTagToCourse(Integer courseId, TagDto tagDto) {
 
-        Course course = checkCourseExist(courseId);
+        Course course = commons.checkCourseExist(courseId);
 
         Tag tag = tagRepository
                 .findByTagName(tagDto.getTagName())
@@ -54,7 +60,7 @@ public class TagService {
         }
 
         if(course.getTags().contains(tag)){
-            throw new RuntimeException("Tag already exist");
+            throw new TagAlreadyExistException("Tag already exist");
         }
 
         course.getTags().add(tag);
@@ -63,14 +69,5 @@ public class TagService {
         courseRepository.save(course);
 
         return tagDto;
-    }
-
-    public Course checkCourseExist(Integer courseId) throws Exception{
-
-        Optional<Course> optionalCourse = courseRepository.findById(courseId);
-        if(optionalCourse.isEmpty()){
-            throw new Exception("Course not found");
-        }
-        return optionalCourse.get();
     }
 }

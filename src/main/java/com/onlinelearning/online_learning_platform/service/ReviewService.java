@@ -2,6 +2,7 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
+import com.onlinelearning.online_learning_platform.exception.ReviewException;
 import com.onlinelearning.online_learning_platform.mapper.ReviewMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
@@ -32,7 +33,7 @@ public class ReviewService {
         this.reviewMapper = reviewMapper;
     }
 
-    public Set<ReviewDto> getAll(Integer courseId) throws Exception{
+    public Set<ReviewDto> getAll(Integer courseId) {
 
         commons.checkCourseExist(courseId);
 
@@ -42,16 +43,13 @@ public class ReviewService {
     }
 
 
-    public ReviewDto addReview(Integer courseId, Integer studId, ReviewDto reviewDto) throws Exception{
+    public ReviewDto addReview(Integer courseId, Integer studId, ReviewDto reviewDto) {
 
         Course course = commons.checkCourseExist(courseId);
         Student student = commons.checkStudentExist(studId);
 
-//        if(course.getReviews().stream().anyMatch(review -> review.getStudent().equals(student))){
-//            throw new RuntimeException("Student already reviewed this course");
-//        }
         if(student.getReview() != null){
-            throw new RuntimeException("Student already reviewed this course");
+            throw new ReviewException("Student already reviewed this course");
         }
 
         Review review = reviewMapper.toEntity(reviewDto);
@@ -62,7 +60,7 @@ public class ReviewService {
         return reviewMapper.toDto(savedReview);
     }
 
-    public ReviewDto updateReview(Integer courseId, Integer reviewId, ReviewDto reviewDto) throws Exception {
+    public ReviewDto updateReview(Integer courseId, Integer reviewId, ReviewDto reviewDto) {
 
         Course course = commons.checkCourseExist(courseId);
 
@@ -76,7 +74,7 @@ public class ReviewService {
         return reviewMapper.toDto(updatedReview);
     }
 
-    public String delete(Integer courseId, Integer reviewId) throws Exception{
+    public String delete(Integer courseId, Integer reviewId) {
 
         Course course = commons.checkCourseExist(courseId);
 
@@ -88,10 +86,10 @@ public class ReviewService {
         return "Review deleted successfully with ID: "+ review.getId();
     }
 
-    public Review checkReviewExist(ReviewID reviewID) throws Exception{
+    public Review checkReviewExist(ReviewID reviewID) {
         Optional<Review> optionalReview = reviewRepository.findById(reviewID);
         if(optionalReview.isEmpty()){
-            throw new Exception("Review not found");
+            throw new ReviewException("Review not found");
         }
 
         return optionalReview.get();

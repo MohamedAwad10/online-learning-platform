@@ -4,6 +4,7 @@ import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
+import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
@@ -32,7 +33,7 @@ public class InstructorService {
         this.courseMapper = courseMapper;
     }
 
-    public InstructorDto getById(Integer instructorId) throws Exception{
+    public InstructorDto getById(Integer instructorId) {
 
         Instructor instructor = checkInstructorExist(instructorId);
 
@@ -45,7 +46,7 @@ public class InstructorService {
         return userMapper.toInstructorDto(instructor, allCourses, contactDtos);
     }
 
-    public List<InstructorCoursesDto> getAllCourses(Integer instructorId) throws Exception{
+    public List<InstructorCoursesDto> getAllCourses(Integer instructorId) {
 
         Instructor instructor = checkInstructorExist(instructorId);
 
@@ -55,7 +56,7 @@ public class InstructorService {
         return courses.stream().map(course -> courseMapper.toInstructorCoursesDto(course)).toList();
     }
 
-    public Set<InstructorCoursesDto> searchCourses(Integer instructorId, String keyword) throws Exception{
+    public Set<InstructorCoursesDto> searchCourses(Integer instructorId, String keyword) {
 
         checkInstructorExist(instructorId);
         Set<Course> searchedCourses = instructorRepository.searchInstructorCourses(instructorId, keyword);
@@ -66,10 +67,10 @@ public class InstructorService {
         return courses;
     }
 
-    public Instructor checkInstructorExist(int instructorId) throws Exception{
+    public Instructor checkInstructorExist(int instructorId) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         if (optionalInstructor.isEmpty()) {
-            throw new Exception("Instructor not found");
+            throw new UserNotFoundException("Instructor not found");
         }
 
        return optionalInstructor.get();

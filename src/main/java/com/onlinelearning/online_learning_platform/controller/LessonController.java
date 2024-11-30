@@ -21,65 +21,41 @@ public class LessonController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllLessons(@PathVariable Integer courseId){
-        try {
-            List<LessonDto> allLessons = lessonService.getAll(courseId);
-            if(allLessons.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-            }
-            return ResponseEntity.ok(allLessons);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+
+        List<LessonDto> allLessons = lessonService.getAll(courseId);
+        if(allLessons.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
+        return ResponseEntity.ok(allLessons);
     }
 
     @GetMapping("/{lessonId}")
     public ResponseEntity<?> getLessonById(@PathVariable Integer courseId, @PathVariable Integer lessonId){
 
-        try {
-            LessonDto lesson = lessonService.getById(courseId, lessonId);
-            return ResponseEntity.ok(lesson);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        LessonDto lesson = lessonService.getById(courseId, lessonId);
+        return ResponseEntity.ok(lesson);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addLesson(@PathVariable Integer courseId
             , @Valid @RequestBody LessonDto lessonDto){
 
-        try {
-            LessonDto lesson = lessonService.insert(courseId, lessonDto);
-            return ResponseEntity.ok(lesson);
-
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        LessonDto lesson = lessonService.insert(courseId, lessonDto);
+        return ResponseEntity.ok(lesson);
     }
 
     @PutMapping("/update/{lessonId}")
     public ResponseEntity<?> updateLesson(@PathVariable Integer courseId, @PathVariable Integer lessonId
             , @Valid @RequestBody LessonDto lessonDto){
 
-        try {
-            LessonDto lesson = lessonService.update(courseId, lessonId, lessonDto);
-            return ResponseEntity.ok(lesson);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        LessonDto lesson = lessonService.update(courseId, lessonId, lessonDto);
+        return ResponseEntity.ok(lesson);
     }
 
     @DeleteMapping("/delete/{lessonId}")
     public ResponseEntity<String> deleteLesson(@PathVariable Integer courseId, @PathVariable Integer lessonId){
 
-        try {
-            String message = lessonService.delete(courseId, lessonId);
-            return ResponseEntity.ok(message);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        String message = lessonService.delete(courseId, lessonId);
+        return ResponseEntity.ok(message);
     }
 }

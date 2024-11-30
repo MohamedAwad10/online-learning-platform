@@ -3,6 +3,10 @@ package com.onlinelearning.online_learning_platform.service;
 import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserUpdateDto;
+import com.onlinelearning.online_learning_platform.exception.EmailAlreadyInUseException;
+import com.onlinelearning.online_learning_platform.exception.RoleException;
+import com.onlinelearning.online_learning_platform.exception.RoleNotFoundException;
+import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Users;
@@ -34,16 +38,16 @@ public class UserService {
     }
 
     @Transactional
-    public String register(UserDto userDto) throws Exception{
+    public String register(UserDto userDto) {
 
         Optional<Users> optionalUser = userRepository.findByEmail(userDto.getEmail());
         if(optionalUser.isPresent()){
-            throw new Exception("This email is already in use");
+            throw new EmailAlreadyInUseException("This email is already in use");
         }
         Users user = userMapper.toStudentEntity(userDto);
 
         Optional<Role> optionalRole = roleRepository.findByRoleName("STUDENT");
-        user.addRole(optionalRole.orElseThrow(() -> new Exception("STUDENT role not found")));
+        user.addRole(optionalRole.orElseThrow(() -> new RoleNotFoundException("STUDENT role not found")));
 
         Users savedUser = userRepository.save(user);
 
@@ -57,7 +61,7 @@ public class UserService {
         return users.stream().map(user -> userMapper.toUserResponseDto(user)).toList();
     }
 
-    public String delete(Integer userId) throws Exception{
+    public String delete(Integer userId) {
 
         Users user = checkUserExist(userId);
         userRepository.delete(user);
@@ -66,7 +70,7 @@ public class UserService {
     }
 
     @Transactional
-    public String update(UserUpdateDto userDto, Integer userId) throws Exception{
+    public String update(UserUpdateDto userDto, Integer userId) {
 
         Users user = checkUserExist(userId);
 
@@ -88,20 +92,16 @@ public class UserService {
     }
 
     @Transactional
-    public String addInstructorRole(Integer userId) throws Exception {
+    public String addInstructorRole(Integer userId) {
 
-        Optional<Users> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new Exception("User not found");
-        }
-        Users user = optionalUser.get();
+        Users user = checkUserExist(userId);
 
         if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("INSTRUCTOR"))){
-            throw new Exception("User already has instructor role, redirect him to instructor page.");
+            throw new RoleException("User already has instructor role, redirect him to instructor page.");
         }
 
         Role instructorRole = roleRepository.findByRoleName("INSTRUCTOR")
-                .orElseThrow(() -> new Exception("INSTRUCTOR role not found"));
+                .orElseThrow(() -> new RoleNotFoundException("INSTRUCTOR role not found"));
 
         user.addRole(instructorRole);
         userRepository.save(user);
@@ -109,10 +109,10 @@ public class UserService {
         return "Instructor role added successfully";
     }
 
-    public Users checkUserExist(Integer userId) throws Exception{
+    public Users checkUserExist(Integer userId) {
         Optional<Users> optionalUser = userRepository.findById(userId);
         if(optionalUser.isEmpty()){
-            throw new Exception("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         return optionalUser.get();

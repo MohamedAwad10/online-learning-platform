@@ -35,43 +35,30 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<?> getCategoryCourses(@PathVariable Integer categoryId){
-        try {
-            CategoryDto category = categoryService.findById(categoryId);
-            return ResponseEntity.ok(category);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        CategoryDto category = categoryService.findById(categoryId);
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDto categoryDto){
-        try {
-            CategoryDtoWithoutCourses category = categoryService.create(categoryDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(category);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        CategoryDtoWithoutCourses category = categoryService.create(categoryDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 
     @PutMapping("/update/{categoryId}")
     public ResponseEntity<?> updateCategory(@PathVariable Integer categoryId
             , @Valid @RequestBody CategoryDto categoryDto){
 
-        try {
-            CategoryDto category = categoryService.update(categoryId, categoryDto);
-            return ResponseEntity.ok(category);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        CategoryDto category = categoryService.update(categoryId, categoryDto);
+        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/delete/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Integer categoryId){
-        try {
-            String message = categoryService.delete(categoryId);
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+
+        String message = categoryService.delete(categoryId);
+        return ResponseEntity.ok(message);
     }
 }

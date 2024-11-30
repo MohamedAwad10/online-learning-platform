@@ -21,46 +21,34 @@ public class ReviewController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCourseReviews(@PathVariable Integer courseId){
-        try{
-            Set<ReviewDto> reviews = reviewService.getAll(courseId);
-            if(reviews.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-            }
-            return ResponseEntity.ok(reviews);
-        } catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+
+        Set<ReviewDto> reviews = reviewService.getAll(courseId);
+        if(reviews.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
+        return ResponseEntity.ok(reviews);
     }
 
     @PostMapping("/{studId}")
     public ResponseEntity<?> addReviewToCourse(@PathVariable Integer courseId, @PathVariable Integer studId
                                                 , @Valid @RequestBody ReviewDto reviewDto){
-        try{
-            ReviewDto review = reviewService.addReview(courseId, studId, reviewDto);
-            return ResponseEntity.ok(review);
-        } catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-        }
+
+        ReviewDto review = reviewService.addReview(courseId, studId, reviewDto);
+        return ResponseEntity.ok(review);
     }
 
     @PutMapping("/update/{reviewId}")
     public ResponseEntity<?> updateReviewInCourse(@PathVariable Integer courseId
             , @PathVariable Integer reviewId, @Valid @RequestBody ReviewDto reviewDto){
-        try{
-            ReviewDto review = reviewService.updateReview(courseId, reviewId, reviewDto);
-            return ResponseEntity.ok(review);
-        } catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-        }
+
+        ReviewDto review = reviewService.updateReview(courseId, reviewId, reviewDto);
+        return ResponseEntity.ok(review);
     }
 
     @DeleteMapping("/delete/{reviewId}")
     public ResponseEntity<?> deleteReview(@PathVariable Integer courseId, @PathVariable Integer reviewId){
-        try{
-            String message = reviewService.delete(courseId, reviewId);
-            return ResponseEntity.ok(message);
-        } catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-        }
+
+        String message = reviewService.delete(courseId, reviewId);
+        return ResponseEntity.ok(message);
     }
 }
