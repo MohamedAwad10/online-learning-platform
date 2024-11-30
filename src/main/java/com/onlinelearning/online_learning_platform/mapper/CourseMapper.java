@@ -1,6 +1,6 @@
 package com.onlinelearning.online_learning_platform.mapper;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
@@ -46,7 +46,7 @@ public class CourseMapper {
     }
 
     public FullCourseDto toFullCourseDto(Course course, CourseInstructorDto courseInstructorDto
-            , List<LessonDto> lessonsDto, Set<ReviewDto> reviews, CategoryWithoutCoursesDto categoryDto){
+            , List<LessonDto> lessonsDto, Set<ReviewDto> reviews, CategoryDtoWithoutCourses categoryDto){
 
         return FullCourseDto.builder()
                 .id(course.getId())
@@ -74,7 +74,7 @@ public class CourseMapper {
                 .build();
     }
 
-    public CourseCreationDTO toCourseCreationDto(Course course, Set<TagDto> tagsDto, CategoryWithoutCoursesDto categoryDto){
+    public CourseCreationDTO toCourseCreationDto(Course course, Set<TagDto> tagsDto, CategoryDtoWithoutCourses categoryDto){
 
         return CourseCreationDTO.builder()
                 .id(course.getId())

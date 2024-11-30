@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.mapper;
 
 import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.model.Category;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,9 @@ public class CategoryMapper {
                 .build();
     }
 
-    public CategoryWithoutCoursesDto toCategoryWithoutCoursesDto(Category category){
+    public CategoryDtoWithoutCourses toCategoryDtoWithoutCourses(Category category){
 
-        return CategoryWithoutCoursesDto.builder()
+        return CategoryDtoWithoutCourses.builder()
                 .id(category.getId())
                 .name(category.getCategoryName())
                 .build();

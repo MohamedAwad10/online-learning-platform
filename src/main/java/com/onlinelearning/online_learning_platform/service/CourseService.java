@@ -1,7 +1,7 @@
 package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.commons.Commons;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
@@ -89,7 +89,7 @@ public class CourseService {
         Course savedCourse = courseRepository.save(course);
 
         return courseMapper.toCourseCreationDto
-                (savedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryWithoutCoursesDto(category));
+                (savedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryDtoWithoutCourses(category));
     }
 
     @Transactional
@@ -114,7 +114,7 @@ public class CourseService {
         Course updatedCourse = courseRepository.save(course);
 
         return courseMapper.toCourseCreationDto
-                (updatedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryWithoutCoursesDto(category));
+                (updatedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryDtoWithoutCourses(category));
     }
 
     public String delete(int courseId) throws Exception{
@@ -197,7 +197,7 @@ public class CourseService {
         Set<ReviewDto> reviews = course.getReviews().stream()
                 .map(review -> reviewMapper.toDto(review)).collect(Collectors.toSet());
 
-        CategoryWithoutCoursesDto categoryDto = categoryMapper.toCategoryWithoutCoursesDto(course.getCategory());
+        CategoryDtoWithoutCourses categoryDto = categoryMapper.toCategoryDtoWithoutCourses(course.getCategory());
 
         return courseMapper.toFullCourseDto(course, courseInstructorDto, lessons, reviews, categoryDto);
     }

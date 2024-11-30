@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
 import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.mapper.CategoryMapper;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
@@ -44,7 +44,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryWithoutCoursesDto create(CategoryDto categoryDto) throws Exception{
+    public CategoryDtoWithoutCourses create(CategoryDto categoryDto) throws Exception{
 
         Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryDto.getName());
         if(optionalCategory.isPresent()){
@@ -54,7 +54,7 @@ public class CategoryService {
         Category category = categoryMapper.toEntity(categoryDto);
         Category savedCategory = categoryRepository.save(category);
 
-        return categoryMapper.toCategoryWithoutCoursesDto(savedCategory);
+        return categoryMapper.toCategoryDtoWithoutCourses(savedCategory);
     }
 
     public CategoryDto findById(Integer categoryId) throws Exception{

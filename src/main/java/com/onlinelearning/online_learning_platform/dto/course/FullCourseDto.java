@@ -1,6 +1,6 @@
 package com.onlinelearning.online_learning_platform.dto.course;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
@@ -32,7 +32,7 @@ public class FullCourseDto {
 
     private CourseInstructorDto instructor;
 
-    private CategoryWithoutCoursesDto category;
+    private CategoryDtoWithoutCourses category;
 
     private List<LessonDto> lessons;
 

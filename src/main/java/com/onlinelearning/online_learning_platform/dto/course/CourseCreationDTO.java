@@ -1,6 +1,6 @@
 package com.onlinelearning.online_learning_platform.dto.course;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryWithoutCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ public class CourseCreationDTO {
     private Set<TagDto> tags;
 
     @NotNull(message = "Category can't be null")
-    private CategoryWithoutCoursesDto category;
+    private CategoryDtoWithoutCourses category;
 
     private String image;
 
