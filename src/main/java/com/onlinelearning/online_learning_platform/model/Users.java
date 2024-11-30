@@ -45,9 +45,8 @@ public class Users {
     )
     private String lastName;
 
+    @Email(message = "Invalid email format")
     @NotNull(message = "Email is required")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-            message = "Enter a correct pattern for your email")
     @Column(
             name = "email",
             unique = true,
