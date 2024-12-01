@@ -62,7 +62,7 @@ public class Course {
     private String image;
 
     @NotNull(message = "Tags must not be null")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "course_tag",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -89,7 +89,7 @@ public class Course {
     @OneToMany(
             mappedBy = "course",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     private List<Lesson> lessons;
 
