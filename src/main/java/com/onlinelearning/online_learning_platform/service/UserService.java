@@ -1,8 +1,9 @@
 package com.onlinelearning.online_learning_platform.service;
 
-import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.UserDto;
-import com.onlinelearning.online_learning_platform.dto.user.UserUpdateDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.exception.EmailAlreadyInUseException;
 import com.onlinelearning.online_learning_platform.exception.RoleException;
 import com.onlinelearning.online_learning_platform.exception.RoleNotFoundException;
@@ -61,16 +62,17 @@ public class UserService {
         return users.stream().map(user -> userMapper.toUserResponseDto(user)).toList();
     }
 
+    @Transactional
     public String delete(Integer userId) {
 
         Users user = checkUserExist(userId);
         userRepository.delete(user);
 
-        return "User deleted successfully";
+        return "User deleted successfully with ID: "+ user.getId();
     }
 
     @Transactional
-    public String update(UserUpdateDto userDto, Integer userId) {
+    public UpdatedUserResponseDto update(UserUpdateDto userDto, Integer userId) {
 
         Users user = checkUserExist(userId);
 
@@ -86,9 +88,9 @@ public class UserService {
                 .collect(Collectors.toSet()));
         user.setProfileImage(userDto.getImage());
 
-        userRepository.save(user);
+        Users updatedUser = userRepository.save(user);
 
-        return "User Updated Successfully with ID: "+user.getId();
+        return userMapper.toUpdatedUserResponseDto(updatedUser, userDto.getContacts());
     }
 
     @Transactional

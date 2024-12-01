@@ -1,25 +1,28 @@
 package com.onlinelearning.online_learning_platform.mapper;
 
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.*;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.CourseInstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.model.Instructor;
 import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.model.Users;
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
-import com.onlinelearning.online_learning_platform.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
 
     public AllUsersDto toUserResponseDto(Users user){
         return AllUsersDto.builder()
+                .id(user.getId())
                 .fullName(user.getFirstName()+" "+user.getLastName())
                 .email(user.getEmail())
                 .image(user.getProfileImage())
@@ -101,6 +104,17 @@ public class UserMapper {
     public UserContacts toUserContactsEntity(UserContactDto userContactDto){
         return UserContacts.builder()
                 .contact(userContactDto.getContact())
+                .build();
+    }
+
+    public UpdatedUserResponseDto toUpdatedUserResponseDto(Users user, Set<UserContactDto> contactDtos){
+
+        return UpdatedUserResponseDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .image(user.getProfileImage())
+                .contacts(contactDtos)
                 .build();
     }
 }
