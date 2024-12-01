@@ -2,7 +2,7 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
-import com.onlinelearning.online_learning_platform.exception.TagAlreadyExistException;
+import com.onlinelearning.online_learning_platform.exception.TagException;
 import com.onlinelearning.online_learning_platform.mapper.TagMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Tag;
@@ -59,8 +59,9 @@ public class TagService {
             tag.setCourses(new HashSet<>());
         }
 
-        if(course.getTags().contains(tag)){
-            throw new TagAlreadyExistException("Tag already exist");
+        Optional<Tag> optionalTag = tagRepository.findTagInCourse(courseId, tag.getId());
+        if(optionalTag.isPresent()){
+            throw new TagException("Tag already exist");
         }
 
         course.getTags().add(tag);
@@ -68,6 +69,15 @@ public class TagService {
 
         courseRepository.save(course);
 
-        return tagDto;
+        return tagMapper.toDto(tag);
+    }
+
+    @Transactional
+    public String deleteTag(Integer tagId) {
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new TagException("Tag not found"));
+        tagRepository.delete(tag);
+        return "Tag deleted successfully with ID: "+ tagId;
     }
 }

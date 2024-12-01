@@ -11,6 +11,9 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
 
     Optional<Tag> findByTagName(String tagName);
 
-    @Query("from Tag where LOWER(tagName) like LOWER(CONCAT('%', :keyword, '%'))")
+    @Query("FROM Tag WHERE LOWER(tagName) like LOWER(CONCAT('%', :keyword, '%'))")
     List<Tag> searchByTagName(String keyword);
+
+    @Query("SELECT t FROM Tag t JOIN t.courses c WHERE c.id = :courseId AND t.id = :tagId")
+    Optional<Tag> findTagInCourse(Integer courseId, Integer tagId);
 }
