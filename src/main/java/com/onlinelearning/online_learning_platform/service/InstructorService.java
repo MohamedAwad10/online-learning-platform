@@ -1,8 +1,8 @@
 package com.onlinelearning.online_learning_platform.service;
 
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
 import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
@@ -10,7 +10,6 @@ import com.onlinelearning.online_learning_platform.mapper.UserMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Instructor;
 import com.onlinelearning.online_learning_platform.repository.InstructorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +24,6 @@ public class InstructorService {
     private UserMapper userMapper;
     private CourseMapper courseMapper;
 
-    @Autowired
     public InstructorService(InstructorRepository instructorRepository, UserMapper userMapper
                             , CourseMapper courseMapper) {
         this.instructorRepository = instructorRepository;
