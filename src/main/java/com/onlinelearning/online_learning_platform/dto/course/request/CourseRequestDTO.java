@@ -1,6 +1,6 @@
-package com.onlinelearning.online_learning_platform.dto.course;
+package com.onlinelearning.online_learning_platform.dto.course.request;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,9 +14,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Builder // set for mapping
-public class CourseCreationDTO {
-
-    private Integer id;
+public class CourseRequestDTO {
 
     @NotNull(message = "Title must not be null")
     @NotBlank(message = "Title cannot be blank")
@@ -34,6 +32,4 @@ public class CourseCreationDTO {
     private CategoryDtoWithoutCourses category;
 
     private String image;
-
-    private String createdAt;
 }

@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.dto.category;
+package com.onlinelearning.online_learning_platform.dto.category.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDtoWithoutCourses {
-
-    private Integer id;
+public class CategoryRequestDto {
 
     @NotNull(message = "Category name is Required")
     @NotBlank(message = "Category name cannot be blank")

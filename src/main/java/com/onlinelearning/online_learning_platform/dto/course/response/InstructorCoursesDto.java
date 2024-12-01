@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.dto.course;
+package com.onlinelearning.online_learning_platform.dto.course.response;
 
 import lombok.*;
 

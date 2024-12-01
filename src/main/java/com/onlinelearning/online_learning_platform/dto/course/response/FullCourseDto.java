@@ -1,9 +1,9 @@
-package com.onlinelearning.online_learning_platform.dto.course;
+package com.onlinelearning.online_learning_platform.dto.course.response;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
-import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.CourseInstructorDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

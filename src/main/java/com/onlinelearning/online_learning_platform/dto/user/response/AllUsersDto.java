@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.dto.user;
+package com.onlinelearning.online_learning_platform.dto.user.response;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +10,8 @@ import java.util.List;
 @Getter
 @Builder
 public class AllUsersDto {
+
+    private Integer id;
 
     private String fullName;
 

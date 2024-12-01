@@ -1,7 +1,6 @@
-package com.onlinelearning.online_learning_platform.dto.user;
+package com.onlinelearning.online_learning_platform.dto.user.response;
 
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
