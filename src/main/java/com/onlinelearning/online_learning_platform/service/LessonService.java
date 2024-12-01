@@ -8,7 +8,6 @@ import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.lesson.LessonID;
 import com.onlinelearning.online_learning_platform.repository.LessonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ public class LessonService {
 
     private Commons commons;
 
-    @Autowired
     public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, Commons commons){
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
@@ -61,6 +59,7 @@ public class LessonService {
         return lessonMapper.toDto(savedLesson);
     }
 
+    @Transactional
     public LessonDto update(Integer courseId, Integer lessonId, LessonDto lessonDto) {
 
         Course course = commons.checkCourseExist(courseId);
@@ -77,6 +76,7 @@ public class LessonService {
         return lessonMapper.toDto(updatedLesson);
     }
 
+    @Transactional
     public String delete(Integer courseId, Integer lessonId) {
 
         Course course = commons.checkCourseExist(courseId);
