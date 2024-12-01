@@ -1,9 +1,9 @@
 package com.onlinelearning.online_learning_platform.service;
 
-import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.request.CategoryRequestDto;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryResponseDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.exception.CategoryException;
 import com.onlinelearning.online_learning_platform.mapper.CategoryMapper;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
@@ -34,48 +34,49 @@ public class CategoryService {
         this.courseMapper = courseMapper;
     }
 
-    public List<AllCategoriesDto> allCategories() {
+    public List<CategoryDtoWithoutCourses> allCategories() {
 
         List<Category> categories = categoryRepository.findAll();
 
-        List<AllCategoriesDto> allCategories = categories.stream()
-                .map(category -> categoryMapper.toAllDto(category)).toList();
+        List<CategoryDtoWithoutCourses> allCategories = categories.stream()
+                .map(category -> categoryMapper.toCategoryDtoWithoutCourses(category)).toList();
 
         return allCategories;
     }
 
-    @Transactional
-    public CategoryDtoWithoutCourses create(CategoryDto categoryDto){
-
-        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryDto.getName());
-        if(optionalCategory.isPresent()){
-            throw new CategoryException("Category already exist");
-        }
-
-        Category category = categoryMapper.toEntity(categoryDto);
-        Category savedCategory = categoryRepository.save(category);
-
-        return categoryMapper.toCategoryDtoWithoutCourses(savedCategory);
-    }
-
-    public CategoryDto findById(Integer categoryId) {
+    public CategoryResponseDto findById(Integer categoryId) {
 
         Category category = checkCategoryExistById(categoryId);
         Set<AllCoursesDto> allCourses = category.getCourses().stream()
                 .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
 
-        return categoryMapper.toDto(category, allCourses);
+        return categoryMapper.toResponseDto(category, allCourses);
     }
 
-    public CategoryDto update(Integer categoryId, CategoryDto categoryDto) {
+    @Transactional
+    public CategoryDtoWithoutCourses create(CategoryRequestDto categoryRequestDto){
+
+        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryRequestDto.getName());
+        if(optionalCategory.isPresent()){
+            throw new CategoryException("Category already exist");
+        }
+
+        Category category = categoryMapper.toEntity(categoryRequestDto);
+        Category savedCategory = categoryRepository.save(category);
+
+        return categoryMapper.toCategoryDtoWithoutCourses(savedCategory);
+    }
+
+    @Transactional
+    public CategoryResponseDto update(Integer categoryId, CategoryRequestDto categoryRequestDto) {
 
         Category category = checkCategoryExistById(categoryId);
-        category.setCategoryName(categoryDto.getName());
+        category.setCategoryName(categoryRequestDto.getName());
         Category updatedCategory = categoryRepository.save(category);
         Set<AllCoursesDto> allCourses = updatedCategory.getCourses().stream()
                 .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
 
-        return categoryMapper.toDto(updatedCategory, allCourses);
+        return categoryMapper.toResponseDto(updatedCategory, allCourses);
     }
 
     @Transactional
