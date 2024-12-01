@@ -37,6 +37,11 @@ public class TagController {
         return ResponseEntity.ok(createdTag);
     }
 
+    @DeleteMapping("/{tagId}")
+    public ResponseEntity<?> deleteTagById(@PathVariable Integer tagId){
+        return ResponseEntity.ok(tagService.deleteTag(tagId));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<?> searchTagsByTagName(@Valid @RequestBody TagDto tagDto){
 
