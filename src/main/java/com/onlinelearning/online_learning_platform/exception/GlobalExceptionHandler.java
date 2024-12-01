@@ -96,11 +96,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiException, ex.getMessage().equals("Review not found") ? notFound : conflict);
     }
 
-    @ExceptionHandler(TagAlreadyExistException.class)
-    public ResponseEntity<?> handleTagAlreadyExistException(TagAlreadyExistException ex){
+    @ExceptionHandler(TagException.class)
+    public ResponseEntity<?> handleTagException(TagException ex){
 
+        HttpStatus notFound = HttpStatus.NOT_FOUND;
         HttpStatus conflict = HttpStatus.CONFLICT;
-        return new ResponseEntity<>(commonCode(ex, conflict), conflict);
+
+        ApiException apiException = new ApiException(
+                ex.getMessage().equals("Tag not found") ? notFound : conflict,
+                ex.getMessage(),
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+
+        return new ResponseEntity<>(apiException, ex.getMessage().equals("Tag not found") ? notFound : conflict);
     }
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
