@@ -1,8 +1,9 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.dto.user.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.UserDto;
-import com.onlinelearning.online_learning_platform.dto.user.UserUpdateDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,8 @@ public class UserController {
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
-
-        String message = userService.update(userDto, userId);;
-        return ResponseEntity.ok(message);
+    public ResponseEntity<UpdatedUserResponseDto> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
+        return ResponseEntity.ok(userService.update(userDto, userId));
     }
 
 //    @GetMapping("/{userId}")

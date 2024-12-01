@@ -1,8 +1,8 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.dto.category.AllCategoriesDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDto;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.category.request.CategoryRequestDto;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryResponseDto;
 import com.onlinelearning.online_learning_platform.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CategoryController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCategories(){
-        List<AllCategoriesDto> categories = categoryService.allCategories();
+        List<CategoryDtoWithoutCourses> categories = categoryService.allCategories();
         if(categories.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
         }
@@ -34,24 +34,24 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public ResponseEntity<?> getCategoryCourses(@PathVariable Integer categoryId){
+    public ResponseEntity<CategoryResponseDto> getCategoryCourses(@PathVariable Integer categoryId){
 
-        CategoryDto category = categoryService.findById(categoryId);
+        CategoryResponseDto category = categoryService.findById(categoryId);
         return ResponseEntity.ok(category);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<CategoryDtoWithoutCourses> addCategory(@Valid @RequestBody CategoryRequestDto categoryRequestDto){
 
-        CategoryDtoWithoutCourses category = categoryService.create(categoryDto);
+        CategoryDtoWithoutCourses category = categoryService.create(categoryRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 
     @PutMapping("/update/{categoryId}")
-    public ResponseEntity<?> updateCategory(@PathVariable Integer categoryId
-            , @Valid @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable Integer categoryId
+            , @Valid @RequestBody CategoryRequestDto categoryRequestDto){
 
-        CategoryDto category = categoryService.update(categoryId, categoryDto);
+        CategoryResponseDto category = categoryService.update(categoryId, categoryRequestDto);
         return ResponseEntity.ok(category);
     }
 

@@ -1,7 +1,7 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.user.InstructorDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
 import com.onlinelearning.online_learning_platform.service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class InstructorController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getInstructorById(@PathVariable Integer instructorId){
+    public ResponseEntity<InstructorDto> getInstructorById(@PathVariable Integer instructorId){
 
         InstructorDto instructor =  instructorService.getById(instructorId);
         return ResponseEntity.ok(instructor);

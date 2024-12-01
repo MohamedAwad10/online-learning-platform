@@ -1,8 +1,9 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
+import com.onlinelearning.online_learning_platform.dto.course.request.CourseRequestDTO;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.CourseResponseDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.FullCourseDto;
 import com.onlinelearning.online_learning_platform.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,17 @@ public class CourseController {
     }
 
     @PostMapping("/{instructorId}/create")
-    public ResponseEntity<?> createCourse(@PathVariable Integer instructorId, @Valid @RequestBody CourseCreationDTO courseCreationDTO){
+    public ResponseEntity<CourseResponseDto> createCourse(@PathVariable Integer instructorId, @Valid @RequestBody CourseRequestDTO courseRequestDTO){
 
-        CourseCreationDTO courseDto = courseService.insert(instructorId, courseCreationDTO);
+        CourseResponseDto courseDto = courseService.insert(instructorId, courseRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(courseDto);
     }
 
     @PutMapping("/update/{courseId}")
-    public ResponseEntity<?> updateCourse(@PathVariable Integer courseId
-            , @Valid @RequestBody CourseCreationDTO courseCreationDto){
+    public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable Integer courseId
+            , @Valid @RequestBody CourseRequestDTO courseRequestDto){
 
-        CourseCreationDTO courseDto = courseService.update(courseId, courseCreationDto);
+        CourseResponseDto courseDto = courseService.update(courseId, courseRequestDto);
         return ResponseEntity.ok(courseDto);
     }
 
@@ -44,14 +45,14 @@ public class CourseController {
     }
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<?> findCourseById(@PathVariable Integer courseId){
+    public ResponseEntity<FullCourseDto> findCourseById(@PathVariable Integer courseId){
 
         FullCourseDto course = courseService.findById(courseId);
         return ResponseEntity.ok(course);
     }
 
     @PostMapping("/{courseId}/enroll/{studentId}")
-    public ResponseEntity<?> enrollInCourse(@PathVariable Integer courseId, @PathVariable Integer studentId){
+    public ResponseEntity<String> enrollInCourse(@PathVariable Integer courseId, @PathVariable Integer studentId){
 
         String message = courseService.enrollIn(courseId, studentId);
         return ResponseEntity.ok(message);

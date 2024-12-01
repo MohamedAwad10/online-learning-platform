@@ -30,14 +30,14 @@ public class LessonController {
     }
 
     @GetMapping("/{lessonId}")
-    public ResponseEntity<?> getLessonById(@PathVariable Integer courseId, @PathVariable Integer lessonId){
+    public ResponseEntity<LessonDto> getLessonById(@PathVariable Integer courseId, @PathVariable Integer lessonId){
 
         LessonDto lesson = lessonService.getById(courseId, lessonId);
         return ResponseEntity.ok(lesson);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addLesson(@PathVariable Integer courseId
+    public ResponseEntity<LessonDto> addLesson(@PathVariable Integer courseId
             , @Valid @RequestBody LessonDto lessonDto){
 
         LessonDto lesson = lessonService.insert(courseId, lessonDto);
@@ -45,7 +45,7 @@ public class LessonController {
     }
 
     @PutMapping("/update/{lessonId}")
-    public ResponseEntity<?> updateLesson(@PathVariable Integer courseId, @PathVariable Integer lessonId
+    public ResponseEntity<LessonDto> updateLesson(@PathVariable Integer courseId, @PathVariable Integer lessonId
             , @Valid @RequestBody LessonDto lessonDto){
 
         LessonDto lesson = lessonService.update(courseId, lessonId, lessonDto);

@@ -30,15 +30,15 @@ public class ReviewController {
     }
 
     @PostMapping("/{studId}")
-    public ResponseEntity<?> addReviewToCourse(@PathVariable Integer courseId, @PathVariable Integer studId
-                                                , @Valid @RequestBody ReviewDto reviewDto){
+    public ResponseEntity<ReviewDto> addReviewToCourse(@PathVariable Integer courseId
+            , @PathVariable Integer studId, @Valid @RequestBody ReviewDto reviewDto){
 
         ReviewDto review = reviewService.addReview(courseId, studId, reviewDto);
         return ResponseEntity.ok(review);
     }
 
     @PutMapping("/update/{reviewId}")
-    public ResponseEntity<?> updateReviewInCourse(@PathVariable Integer courseId
+    public ResponseEntity<ReviewDto> updateReviewInCourse(@PathVariable Integer courseId
             , @PathVariable Integer reviewId, @Valid @RequestBody ReviewDto reviewDto){
 
         ReviewDto review = reviewService.updateReview(courseId, reviewId, reviewDto);
@@ -46,7 +46,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/delete/{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable Integer courseId, @PathVariable Integer reviewId){
+    public ResponseEntity<String> deleteReview(@PathVariable Integer courseId, @PathVariable Integer reviewId){
 
         String message = reviewService.delete(courseId, reviewId);
         return ResponseEntity.ok(message);
