@@ -2,16 +2,20 @@ package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
+import com.onlinelearning.online_learning_platform.exception.EnrollmentException;
 import com.onlinelearning.online_learning_platform.exception.ReviewException;
 import com.onlinelearning.online_learning_platform.mapper.ReviewMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
+import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
+import com.onlinelearning.online_learning_platform.model.enrollment.EnrollmentID;
 import com.onlinelearning.online_learning_platform.model.review.Review;
 import com.onlinelearning.online_learning_platform.model.review.ReviewID;
+import com.onlinelearning.online_learning_platform.repository.EnrollmentRepository;
 import com.onlinelearning.online_learning_platform.repository.ReviewRepository;
-import com.onlinelearning.online_learning_platform.repository.StudentRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
@@ -26,11 +30,14 @@ public class ReviewService {
 
     private ReviewMapper reviewMapper;
 
+    private EnrollmentRepository enrollmentRepository;
+
     public ReviewService(ReviewRepository reviewRepository, Commons commons
-                        , ReviewMapper reviewMapper, StudentRepository studentRepository){
+                        , ReviewMapper reviewMapper, EnrollmentRepository enrollmentRepository){
         this.reviewRepository = reviewRepository;
         this.commons = commons;
         this.reviewMapper = reviewMapper;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     public Set<ReviewDto> getAll(Integer courseId) {
@@ -42,13 +49,20 @@ public class ReviewService {
         return reviews.stream().map(review -> reviewMapper.toDto(review)).collect(Collectors.toSet());
     }
 
-
+    @Transactional
     public ReviewDto addReview(Integer courseId, Integer studId, ReviewDto reviewDto) {
 
         Course course = commons.checkCourseExist(courseId);
         Student student = commons.checkStudentExist(studId);
 
-        if(student.getReview() != null){
+        EnrollmentID enrollmentID = new EnrollmentID(student, course);
+        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findById(enrollmentID);
+        if(optionalEnrollment.isEmpty()){
+            throw new EnrollmentException("You are not enroll in this course");
+        }
+
+        Optional<Review> optionalReview = reviewRepository.findByCourseIdAndStudentId(courseId, studId);
+        if(optionalReview.isPresent()){
             throw new ReviewException("Student already reviewed this course");
         }
 
@@ -56,10 +70,12 @@ public class ReviewService {
         review.setCourse(course);
         review.setStudent(student);
 
-        Review savedReview = reviewRepository.save(review);
+        // Ensure entity is saved and createdAt is populated
+        Review savedReview = reviewRepository.saveAndFlush(review);
         return reviewMapper.toDto(savedReview);
     }
 
+    @Transactional
     public ReviewDto updateReview(Integer courseId, Integer reviewId, ReviewDto reviewDto) {
 
         Course course = commons.checkCourseExist(courseId);
@@ -74,6 +90,7 @@ public class ReviewService {
         return reviewMapper.toDto(updatedReview);
     }
 
+    @Transactional
     public String delete(Integer courseId, Integer reviewId) {
 
         Course course = commons.checkCourseExist(courseId);
