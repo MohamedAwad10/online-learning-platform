@@ -1,14 +1,15 @@
 package com.onlinelearning.online_learning_platform.mapper;
 
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
-import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
-import com.onlinelearning.online_learning_platform.dto.course.InstructorCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.course.request.CourseRequestDTO;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.CourseResponseDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.FullCourseDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
-import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Tag;
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
 @Component
 public class CourseMapper {
 
-    public Course toCourseEntity(CourseCreationDTO courseCreationDTO, Category category, Set<Tag> tags){
+    public Course toCourseEntity(CourseRequestDTO courseRequestDTO, Category category, Set<Tag> tags){
 
         return Course.builder()
-                .title(courseCreationDTO.getTitle())
-                .description(courseCreationDTO.getDescription())
+                .title(courseRequestDTO.getTitle())
+                .description(courseRequestDTO.getDescription())
                 .tags(tags)
                 .category(category)
                 .build();
@@ -74,9 +75,10 @@ public class CourseMapper {
                 .build();
     }
 
-    public CourseCreationDTO toCourseCreationDto(Course course, Set<TagDto> tagsDto, CategoryDtoWithoutCourses categoryDto){
+    public CourseResponseDto toCourseCreationResponseDto(
+            Course course, Set<TagDto> tagsDto, CategoryDtoWithoutCourses categoryDto){
 
-        return CourseCreationDTO.builder()
+        return CourseResponseDto.builder()
                 .id(course.getId())
                 .title(course.getTitle())
                 .description(course.getDescription())

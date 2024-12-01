@@ -1,13 +1,15 @@
 package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.commons.Commons;
-import com.onlinelearning.online_learning_platform.dto.category.CategoryDtoWithoutCourses;
-import com.onlinelearning.online_learning_platform.dto.course.CourseCreationDTO;
-import com.onlinelearning.online_learning_platform.dto.course.AllCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.course.FullCourseDto;
+import com.onlinelearning.online_learning_platform.dto.category.response.CategoryDtoWithoutCourses;
+import com.onlinelearning.online_learning_platform.dto.course.request.CourseRequestDTO;
+import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.CourseResponseDto;
+import com.onlinelearning.online_learning_platform.dto.course.response.FullCourseDto;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
-import com.onlinelearning.online_learning_platform.dto.user.CourseInstructorDto;
+import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.CourseInstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
 import com.onlinelearning.online_learning_platform.enums.CourseStatus;
 import com.onlinelearning.online_learning_platform.exception.CategoryException;
@@ -19,7 +21,6 @@ import com.onlinelearning.online_learning_platform.model.*;
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import com.onlinelearning.online_learning_platform.model.enrollment.EnrollmentID;
 import com.onlinelearning.online_learning_platform.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,6 @@ public class CourseService {
     private CategoryMapper categoryMapper;
     private Commons common;
 
-    @Autowired
     public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, UserMapper userMapper
             , InstructorRepository instructorRepository, CategoryRepository categoryRepository
             , LessonMapper lessonMapper, ReviewMapper reviewMapper, TagMapper tagMapper, CategoryMapper categoryMapper
@@ -64,7 +64,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseCreationDTO insert(Integer instructorId, CourseCreationDTO courseCreationDTO) {
+    public CourseResponseDto insert(Integer instructorId, CourseRequestDTO courseRequestDTO) {
 
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         if(optionalInstructor.isEmpty()){
@@ -72,44 +72,46 @@ public class CourseService {
         }
         Instructor instructor = optionalInstructor.get();
 
-        Optional<Course> optionalCourse = courseRepository.findByTitle(courseCreationDTO.getTitle());
+        Optional<Course> optionalCourse = courseRepository.findByTitle(courseRequestDTO.getTitle());
         if(optionalCourse.isPresent()){
             throw new CourseException("Course already exists with this title");
         }
 
         Category category = categoryRepository
-                .findByCategoryName(courseCreationDTO.getCategory().getName())
+                .findByCategoryName(courseRequestDTO.getCategory().getName())
                 .orElseThrow(() -> new CategoryException("Category not found"));;
 
-        Set<Tag> tags = courseCreationDTO.getTags().stream()
+        Set<Tag> tags = courseRequestDTO.getTags().stream()
                 .map(tagDto -> tagRepository
                         .findByTagName(tagDto.getTagName())
                         .orElseGet(() -> tagMapper.toEntity(tagDto))).collect(Collectors.toSet());
+        Set<TagDto> tagsDto = tags.stream().map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet());
 
-        Course course = courseMapper.toCourseEntity(courseCreationDTO, category, tags);
+        Course course = courseMapper.toCourseEntity(courseRequestDTO, category, tags);
         course.setStatus(CourseStatus.DRAFT.toString());
         course.setInstructor(instructor);
 
         Course savedCourse = courseRepository.save(course);
 
-        return courseMapper.toCourseCreationDto
-                (savedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryDtoWithoutCourses(category));
+        return courseMapper.toCourseCreationResponseDto
+                (savedCourse, tagsDto, categoryMapper.toCategoryDtoWithoutCourses(category));
     }
 
     @Transactional
-    public CourseCreationDTO update(Integer courseId, CourseCreationDTO courseCreationDTO) {
+    public CourseResponseDto update(Integer courseId, CourseRequestDTO courseRequestDTO) {
 
         Course course = common.checkCourseExist(courseId);
 
         Category category = categoryRepository
-                .findByCategoryName(courseCreationDTO.getCategory().getName())
+                .findByCategoryName(courseRequestDTO.getCategory().getName())
                 .orElseThrow(() -> new CategoryException("Category not found"));
 
-        course.setTitle(courseCreationDTO.getTitle());
-        course.setDescription(courseCreationDTO.getDescription());
+        course.setTitle(courseRequestDTO.getTitle());
+        course.setDescription(courseRequestDTO.getDescription());
         course.setCategory(category);
+        course.setImage(courseRequestDTO.getImage());
 
-        Set<Tag> tags = courseCreationDTO.getTags().stream()
+        Set<Tag> tags = courseRequestDTO.getTags().stream()
                 .map(tagDto -> tagRepository
                         .findByTagName(tagDto.getTagName())
                         .orElseGet(() -> tagMapper.toEntity(tagDto))).collect(Collectors.toSet());
@@ -117,10 +119,13 @@ public class CourseService {
 
         Course updatedCourse = courseRepository.save(course);
 
-        return courseMapper.toCourseCreationDto
-                (updatedCourse, courseCreationDTO.getTags(), categoryMapper.toCategoryDtoWithoutCourses(category));
+        Set<TagDto> tagsDto = tags.stream().map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet());
+
+        return courseMapper.toCourseCreationResponseDto
+                (updatedCourse, tagsDto, categoryMapper.toCategoryDtoWithoutCourses(category));
     }
 
+    @Transactional
     public String delete(int courseId) {
 
         Course course = common.checkCourseExist(courseId);
@@ -157,34 +162,6 @@ public class CourseService {
         return courses.stream().map(course -> courseMapper.toAllCoursesDto(course)).toList();
     }
 
-    public List<AllCoursesDto> findAllPending() {
-
-        List<Course> courses = courseRepository.findAllPending();
-        List<AllCoursesDto> allCourses = courses.stream()
-                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
-
-        return allCourses;
-    }
-
-    public List<AllCoursesDto> findAllApproved() {
-
-        List<Course> courses = courseRepository.findAllApproved();
-        List<AllCoursesDto> allCourses = courses.stream()
-                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
-
-        return allCourses;
-    }
-
-    public String submitCourse(Integer courseId) {
-
-        Course course = common.checkCourseExist(courseId);
-
-        course.setStatus(CourseStatus.PENDING.toString());
-        courseRepository.save(course);
-
-        return "Course submitted for review successfully";
-    }
-
     public FullCourseDto findById(Integer courseId) {
 
         Course course = common.checkCourseExist(courseId);
@@ -204,6 +181,35 @@ public class CourseService {
         CategoryDtoWithoutCourses categoryDto = categoryMapper.toCategoryDtoWithoutCourses(course.getCategory());
 
         return courseMapper.toFullCourseDto(course, courseInstructorDto, lessons, reviews, categoryDto);
+    }
+
+    public List<AllCoursesDto> findAllPending() {
+
+        List<Course> courses = courseRepository.findAllPending();
+        List<AllCoursesDto> allCourses = courses.stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
+
+        return allCourses;
+    }
+
+    public List<AllCoursesDto> findAllApproved() {
+
+        List<Course> courses = courseRepository.findAllApproved();
+        List<AllCoursesDto> allCourses = courses.stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
+
+        return allCourses;
+    }
+
+    @Transactional
+    public String submitCourse(Integer courseId) {
+
+        Course course = common.checkCourseExist(courseId);
+
+        course.setStatus(CourseStatus.PENDING.toString());
+        courseRepository.save(course);
+
+        return "Course submitted for review successfully";
     }
 
     public Course checkApprovedCourseExist(Integer courseId) {
