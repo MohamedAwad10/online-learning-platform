@@ -125,8 +125,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(commonCode(ex, notFound), notFound);
     }
 
-    @ExceptionHandler(RoleException.class)
-    public ResponseEntity<?> handleRoleException(RoleException ex){
+    @ExceptionHandler(RoleAlreadyExistException.class)
+    public ResponseEntity<?> handleRoleException(RoleAlreadyExistException ex){
 
         HttpStatus conflict = HttpStatus.CONFLICT;
         return new ResponseEntity<>(commonCode(ex, conflict), conflict);
