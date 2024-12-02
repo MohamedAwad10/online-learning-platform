@@ -2,11 +2,8 @@ package com.onlinelearning.online_learning_platform.mapper;
 
 import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.*;
-import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
-import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.response.CourseInstructorDto;
-import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
-import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserRequestDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.*;
 import com.onlinelearning.online_learning_platform.model.Instructor;
 import com.onlinelearning.online_learning_platform.model.Role;
 import com.onlinelearning.online_learning_platform.model.Student;
@@ -20,26 +17,37 @@ import java.util.Set;
 @Component
 public class UserMapper {
 
-    public AllUsersDto toUserResponseDto(Users user){
+    public AllUsersDto toAllUsersDto(Users user){
         return AllUsersDto.builder()
                 .id(user.getId())
                 .fullName(user.getFirstName()+" "+user.getLastName())
-                .email(user.getEmail())
                 .image(user.getProfileImage())
                 .joinedDate(user.getJoinedDate().toString())
                 .roles(user.getRoles().stream().map(Role::getRoleName).toList())
                 .build();
     }
 
-    public Student toStudentEntity(UserDto userDto){
+    public UserResponseDto toUserResponseDto(Users user){
+
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .roles(user.getRoles().stream().map(Role::getRoleName).toList())
+                .image(user.getProfileImage())
+                .build();
+    }
+
+    public Student toStudentEntity(UserRequestDto userRequestDto){
 
         return Student.builder()
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .profileImage(userDto.getImage())
-                .birthDate(LocalDate.parse(userDto.getBirthDate()))
+                .firstName(userRequestDto.getFirstName())
+                .lastName(userRequestDto.getLastName())
+                .email(userRequestDto.getEmail())
+                .password(userRequestDto.getPassword())
+                .profileImage(userRequestDto.getImage())
+                .birthDate(LocalDate.parse(userRequestDto.getBirthDate()))
                 .build();
     }
 
@@ -113,6 +121,7 @@ public class UserMapper {
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .email(user.getEmail())
                 .image(user.getProfileImage())
                 .contacts(contactDtos)
                 .build();

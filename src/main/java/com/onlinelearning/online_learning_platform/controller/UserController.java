@@ -1,12 +1,12 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserRequestDto;
 import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UserResponseDto;
 import com.onlinelearning.online_learning_platform.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,6 @@ public class UserController {
 
     private UserService userService;
 
-    @Autowired
     public UserController(UserService userService){
         this.userService = userService;
     }
@@ -53,10 +52,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody UserDto userDto){
+    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto userRequestDto){
 
-        String message = userService.register(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        UserResponseDto userResponseDto = userService.register(userRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
     }
 
     @PutMapping("/update/{userId}")

@@ -1,9 +1,10 @@
 package com.onlinelearning.online_learning_platform.service;
 
 import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.request.UserDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserRequestDto;
 import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UserResponseDto;
 import com.onlinelearning.online_learning_platform.exception.EmailAlreadyInUseException;
 import com.onlinelearning.online_learning_platform.exception.RoleException;
 import com.onlinelearning.online_learning_platform.exception.RoleNotFoundException;
@@ -31,7 +32,6 @@ public class UserService {
 
     private RoleRepository roleRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -39,27 +39,26 @@ public class UserService {
     }
 
     @Transactional
-    public String register(UserDto userDto) {
+    public UserResponseDto register(UserRequestDto userRequestDto) {
 
-        Optional<Users> optionalUser = userRepository.findByEmail(userDto.getEmail());
+        Optional<Users> optionalUser = userRepository.findByEmail(userRequestDto.getEmail());
         if(optionalUser.isPresent()){
             throw new EmailAlreadyInUseException("This email is already in use");
         }
-        Users user = userMapper.toStudentEntity(userDto);
+        Users user = userMapper.toStudentEntity(userRequestDto);
 
         Optional<Role> optionalRole = roleRepository.findByRoleName("STUDENT");
         user.addRole(optionalRole.orElseThrow(() -> new RoleNotFoundException("STUDENT role not found")));
 
         Users savedUser = userRepository.save(user);
 
-        return "User signed in successfully with id: " +savedUser.getId();
+        return userMapper.toUserResponseDto(savedUser);
     }
-
 
     public List<AllUsersDto> findAll() {
 
         List<Users> users = userRepository.findAll();
-        return users.stream().map(user -> userMapper.toUserResponseDto(user)).toList();
+        return users.stream().map(user -> userMapper.toAllUsersDto(user)).toList();
     }
 
     @Transactional
