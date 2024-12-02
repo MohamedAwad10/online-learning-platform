@@ -39,26 +39,4 @@ public class CategoryController {
         CategoryResponseDto category = categoryService.findById(categoryId);
         return ResponseEntity.ok(category);
     }
-
-    @PostMapping("/create")
-    public ResponseEntity<CategoryDtoWithoutCourses> addCategory(@Valid @RequestBody CategoryRequestDto categoryRequestDto){
-
-        CategoryDtoWithoutCourses category = categoryService.create(categoryRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(category);
-    }
-
-    @PutMapping("/update/{categoryId}")
-    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable Integer categoryId
-            , @Valid @RequestBody CategoryRequestDto categoryRequestDto){
-
-        CategoryResponseDto category = categoryService.update(categoryId, categoryRequestDto);
-        return ResponseEntity.ok(category);
-    }
-
-    @DeleteMapping("/delete/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Integer categoryId){
-
-        String message = categoryService.delete(categoryId);
-        return ResponseEntity.ok(message);
-    }
 }

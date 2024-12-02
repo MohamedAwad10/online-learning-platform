@@ -69,16 +69,6 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
-    @GetMapping("/pending-courses")
-    public ResponseEntity<?> findAllPendingCourses(){
-
-        List<AllCoursesDto> courses = courseService.findAllPending();
-        if(courses.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No courses");
-        }
-        return ResponseEntity.ok(courses);
-    }
-
     @GetMapping("/approved-courses")
     public ResponseEntity<?> findAllApprovedCourses(){
 
