@@ -28,22 +28,6 @@ public class UserController {
 //        return userService.login();
 //    }
 
-    @GetMapping("/")
-    public ResponseEntity<?> findAllUsers() {
-        List<AllUsersDto> users = userService.findAll();
-        if(users.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users");
-        }
-        return ResponseEntity.ok(users);
-    }
-
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer userId){
-
-        String message = userService.delete(userId);
-        return ResponseEntity.ok(message);
-    }
-
     @PutMapping("/{userId}")
     public ResponseEntity<String> addInstructorRole(@PathVariable Integer userId){
 
@@ -62,9 +46,4 @@ public class UserController {
     public ResponseEntity<UpdatedUserResponseDto> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
         return ResponseEntity.ok(userService.update(userDto, userId));
     }
-
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<?> findUserById(@PathVariable Integer userId){
-//        return userService.findById(userId);
-//    }
 }
