@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/online-learning/instructor/{instructorId}/")
+@RequestMapping("/api/online-learning/instructor/{instructorId}")
 public class InstructorController {
 
     private InstructorService instructorService;
@@ -29,7 +29,7 @@ public class InstructorController {
         return ResponseEntity.ok(instructor);
     }
 
-    @GetMapping("courses/")
+    @GetMapping("/courses")
     public ResponseEntity<?> getAllInstructorCourses(@PathVariable Integer instructorId){
 
         List<InstructorCoursesDto> allInstructorCourses = instructorService.getAllCourses(instructorId);
@@ -40,7 +40,7 @@ public class InstructorController {
         return ResponseEntity.ok(allInstructorCourses);
     }
 
-    @GetMapping("search/")
+    @GetMapping("/search")
     public ResponseEntity<?> searchInstructorCourses(@PathVariable Integer instructorId
             , @RequestParam String keyword){
 
