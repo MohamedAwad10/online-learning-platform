@@ -31,19 +31,19 @@ public class TagController {
     }
 
     @PostMapping("/{courseId}")
-    public ResponseEntity<?> addTagToCourse(@PathVariable Integer courseId,@Valid @RequestBody TagDto tagDto){
+    public ResponseEntity<TagDto> addTagToCourse(@PathVariable Integer courseId,@Valid @RequestBody TagDto tagDto){
 
         TagDto createdTag = tagService.addTagToCourse(courseId, tagDto);
         return ResponseEntity.ok(createdTag);
     }
 
     @DeleteMapping("/{tagId}")
-    public ResponseEntity<?> deleteTagById(@PathVariable Integer tagId){
+    public ResponseEntity<String> deleteTagById(@PathVariable Integer tagId){
         return ResponseEntity.ok(tagService.deleteTag(tagId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchTagsByTagName(@Valid @RequestBody TagDto tagDto){
+    public ResponseEntity<List<TagDto>> searchTagsByTagName(@Valid @RequestBody TagDto tagDto){
 
         List<TagDto> tags = tagService.searchTags(tagDto);
         return ResponseEntity.ok(tags);
