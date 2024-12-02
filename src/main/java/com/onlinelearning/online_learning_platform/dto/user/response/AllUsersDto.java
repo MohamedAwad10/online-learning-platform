@@ -15,8 +15,6 @@ public class AllUsersDto {
 
     private String fullName;
 
-    private String email;
-
     private List<String> roles;
 
     private String image;
