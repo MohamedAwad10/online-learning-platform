@@ -212,6 +212,32 @@ public class CourseService {
         return "Course submitted for review successfully";
     }
 
+    @Transactional
+    public String approveCourse(Integer courseId) {
+
+        Course course = common.checkCourseExist(courseId);
+
+        if(course.getStatus().equals(CourseStatus.APPROVED.toString())){
+            throw new CourseException("Course has been approved before");
+        }
+
+        course.setStatus(CourseStatus.APPROVED.toString());
+        courseRepository.save(course);
+
+        return "Course approved successfully";
+    }
+
+    @Transactional
+    public String rejectCourse(Integer courseId) {
+
+        Course course = common.checkCourseExist(courseId);
+
+        course.setStatus(CourseStatus.REJECTED.toString());
+        courseRepository.save(course);
+
+        return "The course has been rejected.";
+    }
+
     public Course checkApprovedCourseExist(Integer courseId) {
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
