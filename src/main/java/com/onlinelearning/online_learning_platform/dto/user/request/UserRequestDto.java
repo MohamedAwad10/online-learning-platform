@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserRequestDto {
 
     @NotNull(message = "First name cannot be null")
     @Size(min = 3, max = 20, message = "First name must be between 3 and 20 character")
@@ -20,9 +20,8 @@ public class UserDto {
     @NotBlank(message = "Last name cannot be blank")
     private String lastName;
 
+    @Email(message = "Enter a correct pattern for your email")
     @NotNull(message = "Email is required")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-            message = "Enter a correct pattern for your email")
     private String email;
 
     @NotNull(message = "Password cannot be null")
