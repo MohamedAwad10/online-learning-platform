@@ -6,7 +6,7 @@ import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDt
 import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.UserResponseDto;
 import com.onlinelearning.online_learning_platform.exception.EmailAlreadyInUseException;
-import com.onlinelearning.online_learning_platform.exception.RoleException;
+import com.onlinelearning.online_learning_platform.exception.RoleAlreadyExistException;
 import com.onlinelearning.online_learning_platform.exception.RoleNotFoundException;
 import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
@@ -15,7 +15,6 @@ import com.onlinelearning.online_learning_platform.model.Users;
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import com.onlinelearning.online_learning_platform.repository.RoleRepository;
 import com.onlinelearning.online_learning_platform.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,16 +97,39 @@ public class UserService {
         Users user = checkUserExist(userId);
 
         if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("INSTRUCTOR"))){
-            throw new RoleException("User already has instructor role, redirect him to instructor page.");
+            throw new RoleAlreadyExistException("User already has instructor role, redirect him to instructor page.");
         }
 
         Role instructorRole = roleRepository.findByRoleName("INSTRUCTOR")
-                .orElseThrow(() -> new RoleNotFoundException("INSTRUCTOR role not found"));
+                .orElseThrow(() -> new RoleNotFoundException("Instructor role not found"));
 
         user.addRole(instructorRole);
         userRepository.save(user);
 
         return "Instructor role added successfully";
+    }
+
+    public UserResponseDto findById(Integer userId) {
+
+        Users user = checkUserExist(userId);
+        return userMapper.toUserResponseDto(user);
+    }
+
+    public String setAdminRole(Integer userId) {
+
+        Users user = checkUserExist(userId);
+
+        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"))){
+            throw new RoleAlreadyExistException("The user already has the administrator role.");
+        }
+
+        Role adminRole = roleRepository.findByRoleName("ADMIN")
+                .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
+
+        user.addRole(adminRole);
+        userRepository.save(user);
+
+        return "Admin role added successfully to user";
     }
 
     public Users checkUserExist(Integer userId) {
@@ -118,8 +140,4 @@ public class UserService {
 
         return optionalUser.get();
     }
-
-//    public ResponseEntity<?> findById(Integer userId) {
-//
-//    }
 }
