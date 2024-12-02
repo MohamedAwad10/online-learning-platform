@@ -23,6 +23,10 @@ public class UserUpdateDto {
     @NotBlank(message = "Last name cannot be blank")
     private String lastName;
 
+    @Email(message = "Enter a correct pattern for your email")
+    @NotNull(message = "Email is required")
+    private String email;
+
     @NotNull(message = "Password cannot be null")
     @NotBlank(message = "Password cannot be blank")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&+/#.-])[A-Za-z\\d@$!%*?&]{8,}$",

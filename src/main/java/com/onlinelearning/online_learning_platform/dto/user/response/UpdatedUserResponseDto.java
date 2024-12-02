@@ -15,6 +15,7 @@ public class UpdatedUserResponseDto {
     private Integer id;
     private String firstName;
     private String lastName;
+    private String email;
     private Set<UserContactDto> contacts;
     private String image;
 //    private String bio;
