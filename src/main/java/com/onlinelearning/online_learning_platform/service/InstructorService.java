@@ -4,6 +4,7 @@ import com.onlinelearning.online_learning_platform.dto.course.response.AllCourse
 import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.UserContactDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.SearchedInstructorDto;
 import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.mapper.UserMapper;
@@ -65,12 +66,19 @@ public class InstructorService {
         return courses;
     }
 
+    public List<SearchedInstructorDto> searchInstructor(String keyword) {
+        List<Instructor> instructorList = instructorRepository.searchInstructors(keyword);
+
+        return instructorList.stream()
+                .map(instructor -> userMapper.toSearchedInstructorDto(instructor)).toList();
+    }
+
     public Instructor checkInstructorExist(int instructorId) {
         Optional<Instructor> optionalInstructor = instructorRepository.findById(instructorId);
         if (optionalInstructor.isEmpty()) {
             throw new UserNotFoundException("Instructor not found");
         }
 
-       return optionalInstructor.get();
+        return optionalInstructor.get();
     }
 }

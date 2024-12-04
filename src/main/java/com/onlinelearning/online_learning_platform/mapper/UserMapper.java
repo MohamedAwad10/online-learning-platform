@@ -126,4 +126,12 @@ public class UserMapper {
                 .contacts(contactDtos)
                 .build();
     }
+
+    public SearchedInstructorDto toSearchedInstructorDto(Users user){
+        return SearchedInstructorDto.builder()
+                .id(user.getId())
+                .fullName(user.getFirstName()+' '+user.getLastName())
+                .image(user.getProfileImage())
+                .build();
+    }
 }

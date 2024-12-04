@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -19,7 +20,11 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             "where i.id = :instructorId AND " +
             "(LOWER(c.title) like LOWER(CONCAT('%', :keyword, '%'))) OR " +
             "(LOWER(c.description) like LOWER(CONCAT('%', :keyword, '%'))) OR " +
-            "(LOWER(t.tagName) like LOWER(CONCAT('%', :keyword, '%'))) OR " +
-            "(LOWER(c.category.categoryName) like LOWER(CONCAT('%', :keyword, '%')))")
+            "(LOWER(t.tagName) like LOWER(CONCAT('%', :keyword, '%')))")
     Set<Course> searchInstructorCourses(Integer instructorId, String keyword);
+
+    @Query("SELECT i from Instructor i WHERE " +
+            "LOWER(i.firstName) like LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(i.lastName) like LOWER(CONCAT('%', :keyword, '%'))")
+    List<Instructor> searchInstructors(String keyword);
 }
