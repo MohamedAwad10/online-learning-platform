@@ -1,8 +1,14 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
+import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
+import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.service.InstructorService;
+import com.onlinelearning.online_learning_platform.service.ReviewService;
+import com.onlinelearning.online_learning_platform.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +23,26 @@ public class InstructorController {
 
     private InstructorService instructorService;
 
+    private UserService userService;
+
+    private ReviewService reviewService;
+
     @Autowired
-    public InstructorController(InstructorService instructorService){
+    public InstructorController(InstructorService instructorService, UserService userService
+            , ReviewService reviewService){
         this.instructorService = instructorService;
+        this.userService = userService;
+        this.reviewService = reviewService;
     }
 
-    @GetMapping
+    @GetMapping("/profile")
     public ResponseEntity<InstructorDto> getInstructorById(@PathVariable Integer instructorId){
+        return ResponseEntity.ok(instructorService.getById(instructorId));
+    }
 
-        InstructorDto instructor =  instructorService.getById(instructorId);
-        return ResponseEntity.ok(instructor);
+    @PutMapping("/profile")
+    public ResponseEntity<UpdatedUserResponseDto> updateInstructor(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Integer instructorId){
+        return ResponseEntity.ok(userService.update(userUpdateDto, instructorId));
     }
 
     @GetMapping("/courses")
@@ -40,7 +56,7 @@ public class InstructorController {
         return ResponseEntity.ok(allInstructorCourses);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/courses/search")
     public ResponseEntity<?> searchInstructorCourses(@PathVariable Integer instructorId
             , @RequestParam String keyword){
 

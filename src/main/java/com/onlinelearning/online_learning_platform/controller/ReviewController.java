@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/online-learning/courses/{courseId}/review")
+@RequestMapping("/api/online-learning/review/{courseId}")
 public class ReviewController {
 
     private ReviewService reviewService;
@@ -21,10 +21,9 @@ public class ReviewController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllCourseReviews(@PathVariable Integer courseId){
-
         Set<ReviewDto> reviews = reviewService.getAll(courseId);
         if(reviews.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No reviews found");
         }
         return ResponseEntity.ok(reviews);
     }

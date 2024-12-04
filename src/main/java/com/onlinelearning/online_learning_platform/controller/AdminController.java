@@ -38,10 +38,10 @@ public class AdminController {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<UserResponseDto> findUserById(@PathVariable Integer userId){
-        return new ResponseEntity<>(userService.findById(userId), HttpStatus.FOUND);
-    }
+//    @GetMapping("/users/{userId}") // i am confused should this go to user controller or here
+//    public ResponseEntity<UserResponseDto> findUserById(@PathVariable Integer userId){
+//        return new ResponseEntity<>(userService.findById(userId), HttpStatus.FOUND);
+//    }
 
     @PutMapping("/users/{userId}/promote-user")
     public ResponseEntity<String> setAdminRoleToUser(@PathVariable Integer userId){

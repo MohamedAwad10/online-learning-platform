@@ -23,16 +23,6 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllCategories(){
-        List<CategoryDtoWithoutCourses> categories = categoryService.allCategories();
-        if(categories.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-        }
-
-        return ResponseEntity.ok(categories);
-    }
-
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryResponseDto> getCategoryCourses(@PathVariable Integer categoryId){
 

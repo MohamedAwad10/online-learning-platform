@@ -44,42 +44,14 @@ public class CourseController {
         return ResponseEntity.ok(message);
     }
 
-    @GetMapping("/course/{courseId}")
+    @GetMapping("/{courseId}")
     public ResponseEntity<FullCourseDto> findCourseById(@PathVariable Integer courseId){
 
         FullCourseDto course = courseService.findById(courseId);
         return ResponseEntity.ok(course);
     }
 
-    @PostMapping("/{courseId}/enroll/{studentId}")
-    public ResponseEntity<String> enrollInCourse(@PathVariable Integer courseId, @PathVariable Integer studentId){
-
-        String message = courseService.enrollIn(courseId, studentId);
-        return ResponseEntity.ok(message);
-    }
-
-    @GetMapping("/{studentId}")
-    public ResponseEntity<?> findMyEnrolledCourses(@PathVariable Integer studentId){
-
-        List<AllCoursesDto> courses = courseService.findAllEnrolledCourses(studentId);
-        if(courses.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No Data");
-        }
-
-        return ResponseEntity.ok(courses);
-    }
-
-    @GetMapping("/approved-courses")
-    public ResponseEntity<?> findAllApprovedCourses(){
-
-        List<AllCoursesDto> courses = courseService.findAllApproved();
-        if(courses.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No courses");
-        }
-        return ResponseEntity.ok(courses);
-    }
-
-    @PutMapping("/submit/{courseId}")
+    @PutMapping("/{courseId}/submit-for-review")
     public ResponseEntity<String> submitCourseForReview(@PathVariable Integer courseId){
 
         String message = courseService.submitCourse(courseId);
