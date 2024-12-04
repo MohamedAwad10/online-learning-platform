@@ -37,7 +37,7 @@ public class CourseMapper {
         return AllCoursesDto.builder()
                 .id(course.getId())
                 .title(course.getTitle())
-                .category(course.getCategory().getCategoryName())
+                .description(course.getDescription())
                 .instructorName(course.getInstructor().getFirstName()+" "+course.getInstructor().getLastName())
                 .reviews(course.getReviews().size())
                 .lessons(course.getLessons().size())

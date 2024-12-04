@@ -13,7 +13,7 @@ public class AllCoursesDto {
 
     private String title;
 
-    private String category;
+    private String description;
 
     private String instructorName;
 
