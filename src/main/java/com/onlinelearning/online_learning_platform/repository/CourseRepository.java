@@ -18,4 +18,12 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("SELECT c FROM Course c WHERE c.status = 'APPROVED'")
     List<Course> findAllApproved();
+
+    @Query("SELECT c FROM Course c JOIN c.tags t WHERE c.status = 'APPROVED' AND ( " +
+            "LOWER(c.title) like LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.description) like LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.instructor.firstName) like LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.instructor.lastName) like LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(t.tagName) like LOWER(CONCAT('%', :keyword, '%')) )")
+    List<Course> searchApprovedCourses(String keyword);
 }

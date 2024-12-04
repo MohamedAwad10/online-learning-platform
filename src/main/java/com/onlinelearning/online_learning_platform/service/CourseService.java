@@ -238,6 +238,13 @@ public class CourseService {
         return "The course has been rejected.";
     }
 
+    public List<AllCoursesDto> searchCourses(String keyword) {
+
+        List<Course> courses = courseRepository.searchApprovedCourses(keyword);
+        return courses.stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
+    }
+
     public Course checkApprovedCourseExist(Integer courseId) {
 
         Optional<Course> optionalCourse = courseRepository.findById(courseId);
