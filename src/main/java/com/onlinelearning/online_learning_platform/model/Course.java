@@ -4,8 +4,6 @@ import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.review.Review;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,8 +27,6 @@ public class Course {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "Title must not be null")
-    @NotBlank(message = "Title cannot be blank")
     @Column(
             name = "title",
             nullable = false,
@@ -38,8 +34,6 @@ public class Course {
     )
     private String title;
 
-    @NotNull(message = "Description must not be null")
-    @NotBlank(message = "Description cannot be blank")
     @Column(
             name = "description",
             nullable = false,
@@ -61,7 +55,6 @@ public class Course {
     @Column(name = "image", columnDefinition = "TEXT")
     private String image;
 
-    @NotNull(message = "Tags must not be null")
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "course_tag",
@@ -88,8 +81,8 @@ public class Course {
 
     @OneToMany(
             mappedBy = "course",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
     )
     private List<Lesson> lessons;
 

@@ -2,7 +2,6 @@ package com.onlinelearning.online_learning_platform.model;
 
 import com.onlinelearning.online_learning_platform.model.usercontacts.UserContacts;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,26 +26,18 @@ public class Users {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "First name cannot be null")
-    @Size(min = 3, max = 20, message = "First name must be between 3 and 20 character")
-    @NotBlank(message = "First name cannot be blank")
     @Column(
             name = "first_name",
             nullable = false
     )
     private String firstName;
 
-    @NotNull(message = "Last name cannot be null")
-    @Size(min = 3, max = 20, message = "Last name must be between 3 and 20 characters")
-    @NotBlank(message = "Last name cannot be blank")
     @Column(
             name = "last_name",
             nullable = false
     )
     private String lastName;
 
-    @Email(message = "Invalid email format")
-    @NotNull(message = "Email is required")
     @Column(
             name = "email",
             unique = true,
@@ -54,19 +45,12 @@ public class Users {
     )
     private String email;
 
-    @NotNull(message = "Password cannot be null")
-    @NotBlank(message = "Password cannot be blank")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&+/#.-])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "Password must be at least 8 characters long and include at least one uppercase letter," +
-                    " one lowercase letter, one number, and one special character ")
     @Column(
             name = "password",
             nullable = false
     )
     private String password;
 
-    @Setter
-    @Getter
     @Column(name = "joined_date")
     @CreationTimestamp
     private LocalDate joinedDate;
@@ -84,7 +68,7 @@ public class Users {
 
     @OneToMany(
             mappedBy = "user",
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.EAGER
     )
     private Set<UserContacts> contacts;

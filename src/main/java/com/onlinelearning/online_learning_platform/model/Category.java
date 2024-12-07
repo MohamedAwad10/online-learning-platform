@@ -1,9 +1,6 @@
 package com.onlinelearning.online_learning_platform.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.Set;
@@ -23,9 +20,6 @@ public class Category {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "Category name must not be null")
-    @NotBlank(message = "Category name cannot be blank")
-    @Size(min = 2, message = "Category name must be more than 1 character")
     @Column(
             name = "category_name",
             nullable = false,

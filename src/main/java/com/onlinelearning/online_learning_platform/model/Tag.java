@@ -24,8 +24,6 @@ public class Tag {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull(message = "Tag is required")
-    @NotBlank(message = "Tag cannot be blank")
     @Column(
             name = "tag_name",
             nullable = false,

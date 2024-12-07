@@ -3,7 +3,6 @@ package com.onlinelearning.online_learning_platform.model.review;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
@@ -33,9 +32,6 @@ public class Review {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @NotNull(message = "Rating must not be null")
-    @Min(value = 1, message = "Rate must greater than or equal 1")
-    @Max(value = 5, message = "Rate must lower than or equal 5")
     @Column(
             name = "rate",
             nullable = (false),
