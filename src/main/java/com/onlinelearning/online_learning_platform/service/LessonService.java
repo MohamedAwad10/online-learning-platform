@@ -1,6 +1,5 @@
 package com.onlinelearning.online_learning_platform.service;
 
-import com.onlinelearning.online_learning_platform.commons.Commons;
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.exception.LessonNotFoundException;
 import com.onlinelearning.online_learning_platform.mapper.LessonMapper;
@@ -8,6 +7,7 @@ import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.lesson.LessonID;
 import com.onlinelearning.online_learning_platform.repository.LessonRepository;
+import com.onlinelearning.online_learning_platform.service.course.CourseValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,71 +21,59 @@ public class LessonService {
 
     private LessonMapper lessonMapper;
 
-    private Commons commons;
+    private CourseValidator courseValidator;
 
-    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, Commons commons){
+    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, CourseValidator courseValidator){
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
-        this.commons = commons;
+        this.courseValidator = courseValidator;
     }
 
     public List<LessonDto> getAll(Integer courseId) {
-
-        Course course = commons.checkCourseExist(courseId);
-        List<LessonDto> lessons = course.getLessons().stream()
-                .map(lesson -> lessonMapper.toDto(lesson)).toList();
-
-        return lessons;
+        Course course = courseValidator.checkCourseExist(courseId);
+        return getLessonsDto(course.getLessons());
     }
 
     public LessonDto getById(Integer courseId, Integer lessonId) {
 
-        Course course = commons.checkCourseExist(courseId);
+        Course course = courseValidator.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
         Lesson lesson = checkLessonExist(lessonKey);
-
         return lessonMapper.toDto(lesson);
     }
 
     @Transactional
     public LessonDto insert(Integer courseId, LessonDto lessonDto) {
 
-        Course course = commons.checkCourseExist(courseId);
-
+        Course course = courseValidator.checkCourseExist(courseId);
         Lesson lesson = lessonMapper.toEntity(lessonDto);
         lesson.setCourse(course);
         Lesson savedLesson = lessonRepository.save(lesson);
-
         return lessonMapper.toDto(savedLesson);
     }
 
     @Transactional
     public LessonDto update(Integer courseId, Integer lessonId, LessonDto lessonDto) {
 
-        Course course = commons.checkCourseExist(courseId);
+        Course course = courseValidator.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
 
         Lesson lesson = checkLessonExist(lessonKey);
-
         lesson.setTitle(lessonDto.getTitle());
         lesson.setUrl(lessonDto.getUrl());
         lesson.setDuration(lessonDto.getDuration());
 
         Lesson updatedLesson = lessonRepository.save(lesson);
-
         return lessonMapper.toDto(updatedLesson);
     }
 
     @Transactional
     public String delete(Integer courseId, Integer lessonId) {
 
-        Course course = commons.checkCourseExist(courseId);
-
+        Course course = courseValidator.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
         Lesson lesson = checkLessonExist(lessonKey);
-
         lessonRepository.delete(lesson);
-
         return "Lesson deleted successfully with ID: "+ lesson.getId();
     }
 
@@ -94,8 +82,12 @@ public class LessonService {
         if(optionalLesson.isEmpty()){
             throw new LessonNotFoundException("Lesson not found");
         }
-
         return optionalLesson.get();
+    }
+
+    public List<LessonDto> getLessonsDto(List<Lesson> lessons){
+        return lessons.stream()
+                .map(lesson -> lessonMapper.toDto(lesson)).toList();
     }
 
 }

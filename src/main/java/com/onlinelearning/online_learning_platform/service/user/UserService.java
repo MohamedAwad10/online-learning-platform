@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.service;
+package com.onlinelearning.online_learning_platform.service.user;
 
 import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
 import com.onlinelearning.online_learning_platform.dto.user.request.UserRequestDto;
@@ -40,22 +40,17 @@ public class UserService {
     @Transactional
     public UserResponseDto register(UserRequestDto userRequestDto) {
 
-        Optional<Users> optionalUser = userRepository.findByEmail(userRequestDto.getEmail());
-        if(optionalUser.isPresent()){
-            throw new EmailAlreadyInUseException("This email is already in use");
-        }
+        checkEmailUniqueness(userRequestDto.getEmail());
         Users user = userMapper.toStudentEntity(userRequestDto);
 
         Optional<Role> optionalRole = roleRepository.findByRoleName("STUDENT");
         user.addRole(optionalRole.orElseThrow(() -> new RoleNotFoundException("STUDENT role not found")));
 
         Users savedUser = userRepository.save(user);
-
         return userMapper.toUserResponseDto(savedUser);
     }
 
     public List<AllUsersDto> findAll() {
-
         List<Users> users = userRepository.findAll();
         return users.stream().map(user -> userMapper.toAllUsersDto(user)).toList();
     }
@@ -65,7 +60,6 @@ public class UserService {
 
         Users user = checkUserExist(userId);
         userRepository.delete(user);
-
         return "User deleted successfully with ID: "+ user.getId();
     }
 
@@ -87,7 +81,6 @@ public class UserService {
         user.setProfileImage(userDto.getImage());
 
         Users updatedUser = userRepository.save(user);
-
         return userMapper.toUpdatedUserResponseDto(updatedUser, userDto.getContacts());
     }
 
@@ -96,13 +89,7 @@ public class UserService {
 
         Users user = checkUserExist(userId);
 
-        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("INSTRUCTOR"))){
-            throw new RoleAlreadyExistException("User already has instructor role, redirect him to instructor page.");
-        }
-
-        Role instructorRole = roleRepository.findByRoleName("INSTRUCTOR")
-                .orElseThrow(() -> new RoleNotFoundException("Instructor role not found"));
-
+        Role instructorRole = checkRole(user, "INSTRUCTOR");
         user.addRole(instructorRole);
         userRepository.save(user);
 
@@ -119,13 +106,7 @@ public class UserService {
 
         Users user = checkUserExist(userId);
 
-        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"))){
-            throw new RoleAlreadyExistException("The user already has the administrator role.");
-        }
-
-        Role adminRole = roleRepository.findByRoleName("ADMIN")
-                .orElseThrow(() -> new RoleNotFoundException("Admin role not found"));
-
+        Role adminRole = checkRole(user, "ADMIN");
         user.addRole(adminRole);
         userRepository.save(user);
 
@@ -139,5 +120,22 @@ public class UserService {
         }
 
         return optionalUser.get();
+    }
+
+    public void checkEmailUniqueness(String email){
+        Optional<Users> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent()){
+            throw new EmailAlreadyInUseException("This email is already in use");
+        }
+    }
+
+    public Role checkRole(Users user, String roleName){
+        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(roleName))){
+            throw new RoleAlreadyExistException("User already has "+ roleName +" role");
+//            throw new RoleAlreadyExistException("User already has instructor role, redirect him to instructor page.");
+        }
+
+        return roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> new RoleNotFoundException(roleName +" role not found"));
     }
 }

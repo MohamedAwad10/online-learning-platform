@@ -26,4 +26,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
             "LOWER(c.instructor.lastName) like LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(t.tagName) like LOWER(CONCAT('%', :keyword, '%')) )")
     List<Course> searchApprovedCourses(String keyword);
+
+//    @Query("SELECT c FROM Enrollment e JOIN e.course c WHERE e.student.id = :studId")
+//    List<Course> findAllStudentEnrolledCourses(Integer studId);
 }

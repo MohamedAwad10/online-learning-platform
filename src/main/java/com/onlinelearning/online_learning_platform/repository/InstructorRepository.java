@@ -13,7 +13,7 @@ import java.util.Set;
 public interface InstructorRepository extends JpaRepository<Instructor, Integer> {
 
     @Query("select courses from Instructor where id = :instructorId")
-    Set<Course> findAllCoursesById(Integer instructorId);
+    List<Course> findAllCoursesById(Integer instructorId);
 
     @Query("select c from Instructor i JOIN i.courses c " +
             "LEFT JOIN c.tags t " +
@@ -21,7 +21,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             "(LOWER(c.title) like LOWER(CONCAT('%', :keyword, '%'))) OR " +
             "(LOWER(c.description) like LOWER(CONCAT('%', :keyword, '%'))) OR " +
             "(LOWER(t.tagName) like LOWER(CONCAT('%', :keyword, '%')))")
-    Set<Course> searchInstructorCourses(Integer instructorId, String keyword);
+    List<Course> searchInstructorCourses(Integer instructorId, String keyword);
 
     @Query("SELECT i from Instructor i WHERE " +
             "LOWER(i.firstName) like LOWER(CONCAT('%', :keyword, '%')) OR " +

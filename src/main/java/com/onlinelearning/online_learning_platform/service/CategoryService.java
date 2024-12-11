@@ -9,7 +9,6 @@ import com.onlinelearning.online_learning_platform.mapper.CategoryMapper;
 import com.onlinelearning.online_learning_platform.mapper.CourseMapper;
 import com.onlinelearning.online_learning_platform.model.Category;
 import com.onlinelearning.online_learning_platform.repository.CategoryRepository;
-import com.onlinelearning.online_learning_platform.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +26,9 @@ public class CategoryService {
 
     private CourseMapper courseMapper;
 
+
     public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper
-                           , CourseMapper courseMapper, CourseRepository courseRepository){
+                           , CourseMapper courseMapper){
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
         this.courseMapper = courseMapper;
@@ -38,29 +38,23 @@ public class CategoryService {
 
         List<Category> categories = categoryRepository.findAll();
 
-        List<CategoryDtoWithoutCourses> allCategories = categories.stream()
-                .map(category -> categoryMapper.toCategoryDtoWithoutCourses(category)).toList();
+        return categories.stream()
+                .map(categoryMapper::toCategoryDtoWithoutCourses)
+                .toList();
 
-        return allCategories;
     }
 
     public CategoryResponseDto findById(Integer categoryId) {
 
-        Category category = checkCategoryExistById(categoryId);
-        Set<AllCoursesDto> allCourses = category.getCourses().stream()
-                .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
-
+        Category category = validateCategoryExistById(categoryId);
+        Set<AllCoursesDto> allCourses = getAllCategoryCoursesDto(category);
         return categoryMapper.toResponseDto(category, allCourses);
     }
 
     @Transactional
     public CategoryDtoWithoutCourses create(CategoryRequestDto categoryRequestDto){
 
-        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryRequestDto.getName());
-        if(optionalCategory.isPresent()){
-            throw new CategoryException("Category already exist");
-        }
-
+        validateCategoryNameUniqueness(categoryRequestDto.getName());
         Category category = categoryMapper.toEntity(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
 
@@ -70,11 +64,11 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDto update(Integer categoryId, CategoryRequestDto categoryRequestDto) {
 
-        Category category = checkCategoryExistById(categoryId);
+        Category category = validateCategoryExistById(categoryId);
         category.setCategoryName(categoryRequestDto.getName());
+
         Category updatedCategory = categoryRepository.save(category);
-        Set<AllCoursesDto> allCourses = updatedCategory.getCourses().stream()
-                .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
+        Set<AllCoursesDto> allCourses = getAllCategoryCoursesDto(updatedCategory);
 
         return categoryMapper.toResponseDto(updatedCategory, allCourses);
     }
@@ -82,22 +76,44 @@ public class CategoryService {
     @Transactional
     public String delete(Integer categoryId) {
 
-        Category category = checkCategoryExistById(categoryId);
-
-        Category dummyCategory = categoryRepository.findByCategoryName("Uncategorized")
-                .orElseThrow(() -> new CategoryException("Dummy category not found. Please create an 'Uncategorized' category."));
-
-        categoryRepository.updateCategoryForCourse(categoryId, dummyCategory.getId());
+        Category category = validateCategoryExistById(categoryId);
+        handleUncategorizedOnDelete(categoryId);
         categoryRepository.delete(category);
         return "Category deleted successfully with ID: "+ category.getId();
     }
 
-    public Category checkCategoryExistById(Integer categoryId) {
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
-        if(optionalCategory.isEmpty()){
-            throw new CategoryException("Category not found");
-        }
+    public Set<AllCoursesDto> getAllCategoryCoursesDto(Category category){
+        return category.getCourses().stream()
+                .map(course -> courseMapper.toAllCoursesDto(course)).collect(Collectors.toSet());
+    }
 
-        return optionalCategory.get();
+    private Category validateCategoryExistById(Integer categoryId) {
+
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryException("Category not found"));
+    }
+
+    private void validateCategoryNameUniqueness(String categoryName){
+        Optional<Category> optionalCategory = categoryRepository.findByCategoryName(categoryName);
+        if(optionalCategory.isPresent()){
+            throw new CategoryException("Category already exist");
+        }
+    }
+
+    private void handleUncategorizedOnDelete(Integer categoryId){
+        Category dummyCategory = categoryRepository.findByCategoryName("Uncategorized")
+                .orElseThrow(() ->
+                        new CategoryException("Dummy category not found. Please create an 'Uncategorized' category."));
+        categoryRepository.updateCategoryForCourse(categoryId, dummyCategory.getId());
+    }
+
+    public Category checkCategoryExistByName(String categoryName){
+        return categoryRepository
+                .findByCategoryName(categoryName)
+                .orElseThrow(() -> new CategoryException("Category not found"));
+    }
+
+    public CategoryDtoWithoutCourses getCategoryDtoWithoutCourses(Category category){
+        return categoryMapper.toCategoryDtoWithoutCourses(category);
     }
 }
