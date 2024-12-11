@@ -5,10 +5,9 @@ import com.onlinelearning.online_learning_platform.dto.category.response.Categor
 import com.onlinelearning.online_learning_platform.dto.category.response.CategoryResponseDto;
 import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
-import com.onlinelearning.online_learning_platform.dto.user.response.UserResponseDto;
 import com.onlinelearning.online_learning_platform.service.CategoryService;
-import com.onlinelearning.online_learning_platform.service.CourseService;
-import com.onlinelearning.online_learning_platform.service.UserService;
+import com.onlinelearning.online_learning_platform.service.course.CourseService;
+import com.onlinelearning.online_learning_platform.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

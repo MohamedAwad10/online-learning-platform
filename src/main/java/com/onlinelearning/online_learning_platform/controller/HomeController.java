@@ -4,7 +4,7 @@ import com.onlinelearning.online_learning_platform.dto.category.response.Categor
 import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.SearchedInstructorDto;
 import com.onlinelearning.online_learning_platform.service.CategoryService;
-import com.onlinelearning.online_learning_platform.service.CourseService;
+import com.onlinelearning.online_learning_platform.service.course.CourseService;
 import com.onlinelearning.online_learning_platform.service.InstructorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

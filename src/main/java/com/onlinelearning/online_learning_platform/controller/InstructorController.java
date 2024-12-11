@@ -1,13 +1,12 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.course.response.InstructorCoursesDto;
-import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
 import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
 import com.onlinelearning.online_learning_platform.service.InstructorService;
 import com.onlinelearning.online_learning_platform.service.ReviewService;
-import com.onlinelearning.online_learning_platform.service.UserService;
+import com.onlinelearning.online_learning_platform.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +24,10 @@ public class InstructorController {
 
     private UserService userService;
 
-    private ReviewService reviewService;
-
     @Autowired
-    public InstructorController(InstructorService instructorService, UserService userService
-            , ReviewService reviewService){
+    public InstructorController(InstructorService instructorService, UserService userService){
         this.instructorService = instructorService;
         this.userService = userService;
-        this.reviewService = reviewService;
     }
 
     @GetMapping("/profile")

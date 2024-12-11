@@ -1,16 +1,13 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.course.request.CourseRequestDTO;
-import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.course.response.CourseResponseDto;
 import com.onlinelearning.online_learning_platform.dto.course.response.FullCourseDto;
-import com.onlinelearning.online_learning_platform.service.CourseService;
+import com.onlinelearning.online_learning_platform.service.course.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/online-learning/courses")
