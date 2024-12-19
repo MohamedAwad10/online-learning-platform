@@ -51,7 +51,7 @@ public class CourseController {
     @PutMapping("/{courseId}/submit-for-review")
     public ResponseEntity<String> submitCourseForReview(@PathVariable Integer courseId){
 
-        String message = courseService.submitCourse(courseId);
+        String message = courseService.submitCourseForReview(courseId);
         return ResponseEntity.ok(message);
     }
 }
