@@ -4,8 +4,7 @@ import com.onlinelearning.online_learning_platform.dto.course.response.Instructo
 import com.onlinelearning.online_learning_platform.dto.user.request.UserUpdateDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.InstructorDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.UpdatedUserResponseDto;
-import com.onlinelearning.online_learning_platform.service.InstructorService;
-import com.onlinelearning.online_learning_platform.service.ReviewService;
+import com.onlinelearning.online_learning_platform.service.user.InstructorService;
 import com.onlinelearning.online_learning_platform.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ public class InstructorController {
 
     private UserService userService;
 
-    @Autowired
     public InstructorController(InstructorService instructorService, UserService userService){
         this.instructorService = instructorService;
         this.userService = userService;

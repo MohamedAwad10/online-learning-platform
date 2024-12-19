@@ -1,6 +1,6 @@
 package com.onlinelearning.online_learning_platform.controller;
 
-import com.onlinelearning.online_learning_platform.service.EnrollmentService;
+import com.onlinelearning.online_learning_platform.service.enrollment.EnrollmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

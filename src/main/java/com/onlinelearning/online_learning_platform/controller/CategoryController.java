@@ -1,8 +1,7 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.category.response.CategoryResponseDto;
-import com.onlinelearning.online_learning_platform.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.onlinelearning.online_learning_platform.service.category.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,6 @@ public class CategoryController {
 
     private CategoryService categoryService;
 
-    @Autowired
     public CategoryController(CategoryService categoryService){
         this.categoryService = categoryService;
     }

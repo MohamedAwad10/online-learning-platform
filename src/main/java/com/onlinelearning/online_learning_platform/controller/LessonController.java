@@ -1,7 +1,7 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
-import com.onlinelearning.online_learning_platform.service.LessonService;
+import com.onlinelearning.online_learning_platform.service.lesson.LessonService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

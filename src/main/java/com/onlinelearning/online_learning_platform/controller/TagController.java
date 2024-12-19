@@ -1,7 +1,7 @@
 package com.onlinelearning.online_learning_platform.controller;
 
 import com.onlinelearning.online_learning_platform.dto.tag.TagDto;
-import com.onlinelearning.online_learning_platform.service.TagService;
+import com.onlinelearning.online_learning_platform.service.tag.TagService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
