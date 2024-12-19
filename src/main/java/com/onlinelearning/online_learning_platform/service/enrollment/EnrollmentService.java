@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.service;
+package com.onlinelearning.online_learning_platform.service.enrollment;
 
 import com.onlinelearning.online_learning_platform.exception.EnrollmentException;
 import com.onlinelearning.online_learning_platform.model.Course;
@@ -6,7 +6,7 @@ import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import com.onlinelearning.online_learning_platform.model.enrollment.EnrollmentID;
 import com.onlinelearning.online_learning_platform.repository.EnrollmentRepository;
-import com.onlinelearning.online_learning_platform.service.course.CourseValidator;
+import com.onlinelearning.online_learning_platform.service.course.CourseHandlerService;
 import com.onlinelearning.online_learning_platform.service.user.StudentValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,21 +18,21 @@ public class EnrollmentService {
 
     private EnrollmentRepository enrollmentRepository;
 
-    private CourseValidator courseValidator;
+    private CourseHandlerService courseHandlerService;
 
     private StudentValidator studentValidator;
 
-    public EnrollmentService(EnrollmentRepository enrollmentRepository, CourseValidator courseValidator
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, CourseHandlerService courseHandlerService
             , StudentValidator studentValidator) {
         this.enrollmentRepository = enrollmentRepository;
-        this.courseValidator = courseValidator;
+        this.courseHandlerService = courseHandlerService;
         this.studentValidator = studentValidator;
     }
 
     @Transactional
     public String enrollIn(Integer courseId, Integer studentId) {
 
-        Course course = courseValidator.checkApprovedCourseExist(courseId);
+        Course course = courseHandlerService.checkApprovedCourseExist(courseId);
         Student student = studentValidator.checkStudentExist(studentId);
 
         EnrollmentID enrollmentID = new EnrollmentID(student, course);
@@ -47,13 +47,5 @@ public class EnrollmentService {
 
         enrollmentRepository.save(enrollment);
         return "Enrolled in successfully in Course with ID: "+ course.getId();
-    }
-
-    public void checkStudentEnrolledInOrNot(Student student, Course course){
-        EnrollmentID enrollmentID = new EnrollmentID(student, course);
-        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findById(enrollmentID);
-        if(optionalEnrollment.isEmpty()){
-            throw new EnrollmentException("You are not enroll in this course");
-        }
     }
 }

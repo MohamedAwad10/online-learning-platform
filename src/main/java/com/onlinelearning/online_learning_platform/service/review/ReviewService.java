@@ -1,20 +1,19 @@
-package com.onlinelearning.online_learning_platform.service;
+package com.onlinelearning.online_learning_platform.service.review;
 
 import com.onlinelearning.online_learning_platform.dto.review.ReviewDto;
-import com.onlinelearning.online_learning_platform.exception.ReviewException;
 import com.onlinelearning.online_learning_platform.mapper.ReviewMapper;
 import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.model.review.Review;
-import com.onlinelearning.online_learning_platform.model.review.ReviewID;
 import com.onlinelearning.online_learning_platform.repository.ReviewRepository;
 
-import com.onlinelearning.online_learning_platform.service.course.CourseValidator;
+import com.onlinelearning.online_learning_platform.service.enrollment.EnrollmentHandlerService;
+import com.onlinelearning.online_learning_platform.service.enrollment.EnrollmentService;
+import com.onlinelearning.online_learning_platform.service.course.CourseHandlerService;
 import com.onlinelearning.online_learning_platform.service.user.StudentValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,38 +22,40 @@ public class ReviewService {
 
     private ReviewRepository reviewRepository;
 
-    private CourseValidator courseValidator;
+    private CourseHandlerService courseHandlerService;
 
     private StudentValidator studentValidator;
 
     private ReviewMapper reviewMapper;
 
-    private EnrollmentService enrollmentService;
+    private EnrollmentHandlerService enrollmentHandlerService;
 
-    public ReviewService(ReviewRepository reviewRepository, CourseValidator courseValidator
-            , StudentValidator studentValidator, ReviewMapper reviewMapper, EnrollmentService enrollmentService){
+    private ReviewHandlerService reviewHandlerService;
+
+    public ReviewService(ReviewRepository reviewRepository, CourseHandlerService courseHandlerService
+            , StudentValidator studentValidator, ReviewMapper reviewMapper
+            , EnrollmentHandlerService enrollmentHandlerService, ReviewHandlerService reviewHandlerService){
         this.reviewRepository = reviewRepository;
-        this.courseValidator = courseValidator;
+        this.courseHandlerService = courseHandlerService;
         this.studentValidator = studentValidator;
         this.reviewMapper = reviewMapper;
-        this.enrollmentService = enrollmentService;
+        this.enrollmentHandlerService = enrollmentHandlerService;
+        this.reviewHandlerService = reviewHandlerService;
     }
 
     public Set<ReviewDto> getAll(Integer courseId) {
-
-        courseValidator.checkCourseExist(courseId);
+        courseHandlerService.checkCourseExist(courseId);
         Set<Review> reviews = reviewRepository.findAllByCourseId(courseId);
         return reviews.stream().map(review -> reviewMapper.toDto(review)).collect(Collectors.toSet());
     }
 
     @Transactional
     public ReviewDto addReview(Integer courseId, Integer studId, ReviewDto reviewDto) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         Student student = studentValidator.checkStudentExist(studId);
 
-        enrollmentService.checkStudentEnrolledInOrNot(student, course);
-        checkIfReviewed(courseId, studId);
+        enrollmentHandlerService.checkStudentEnrolledInOrNot(student, course);
+        reviewHandlerService.checkIfReviewed(courseId, studId);
 
         Review review = reviewMapper.toEntity(reviewDto);
         review.setCourse(course);
@@ -67,10 +68,9 @@ public class ReviewService {
 
     @Transactional
     public ReviewDto updateReview(Integer courseId, Integer reviewId, ReviewDto reviewDto) {
+        Course course = courseHandlerService.checkCourseExist(courseId);
 
-        Course course = courseValidator.checkCourseExist(courseId);
-
-        Review review = checkReviewExist(reviewId, course);
+        Review review = reviewHandlerService.checkReviewExist(reviewId, course);
         review.setRate(reviewDto.getRate());
         review.setComment(reviewDto.getComment());
 
@@ -80,32 +80,9 @@ public class ReviewService {
 
     @Transactional
     public String delete(Integer courseId, Integer reviewId) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
-        Review review = checkReviewExist(reviewId, course);
+        Course course = courseHandlerService.checkCourseExist(courseId);
+        Review review = reviewHandlerService.checkReviewExist(reviewId, course);
         reviewRepository.delete(review);
         return "Review deleted successfully with ID: "+ review.getId();
-    }
-
-    public Review checkReviewExist(Integer reviewId, Course course) {
-        ReviewID reviewKey = new ReviewID(reviewId, course);
-        Optional<Review> optionalReview = reviewRepository.findById(reviewKey);
-        if(optionalReview.isEmpty()){
-            throw new ReviewException("Review not found");
-        }
-
-        return optionalReview.get();
-    }
-
-    public Set<ReviewDto> getReviewsDto(Set<Review> reviews){
-        return reviews.stream()
-                .map(review -> reviewMapper.toDto(review)).collect(Collectors.toSet());
-    }
-
-    public void checkIfReviewed(Integer courseId, Integer studId){
-        Optional<Review> optionalReview = reviewRepository.findByCourseIdAndStudentId(courseId, studId);
-        if(optionalReview.isPresent()){
-            throw new ReviewException("Student already reviewed this course");
-        }
     }
 }

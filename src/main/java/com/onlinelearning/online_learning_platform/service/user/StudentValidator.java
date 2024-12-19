@@ -3,11 +3,11 @@ package com.onlinelearning.online_learning_platform.service.user;
 import com.onlinelearning.online_learning_platform.exception.UserNotFoundException;
 import com.onlinelearning.online_learning_platform.model.Student;
 import com.onlinelearning.online_learning_platform.repository.StudentRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class StudentValidator {
 
     private StudentRepository studentRepository;

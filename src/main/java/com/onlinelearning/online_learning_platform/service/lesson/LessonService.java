@@ -1,4 +1,4 @@
-package com.onlinelearning.online_learning_platform.service;
+package com.onlinelearning.online_learning_platform.service.lesson;
 
 import com.onlinelearning.online_learning_platform.dto.lesson.LessonDto;
 import com.onlinelearning.online_learning_platform.exception.LessonNotFoundException;
@@ -7,7 +7,7 @@ import com.onlinelearning.online_learning_platform.model.Course;
 import com.onlinelearning.online_learning_platform.model.lesson.Lesson;
 import com.onlinelearning.online_learning_platform.model.lesson.LessonID;
 import com.onlinelearning.online_learning_platform.repository.LessonRepository;
-import com.onlinelearning.online_learning_platform.service.course.CourseValidator;
+import com.onlinelearning.online_learning_platform.service.course.CourseHandlerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,31 +21,34 @@ public class LessonService {
 
     private LessonMapper lessonMapper;
 
-    private CourseValidator courseValidator;
+    private CourseHandlerService courseHandlerService;
 
-    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper, CourseValidator courseValidator){
+    private LessonHandlerService lessonHandlerService;
+
+    public LessonService(LessonRepository lessonRepository, LessonMapper lessonMapper
+            , CourseHandlerService courseHandlerService, LessonHandlerService lessonHandlerService){
         this.lessonRepository = lessonRepository;
         this.lessonMapper = lessonMapper;
-        this.courseValidator = courseValidator;
+        this.courseHandlerService = courseHandlerService;
+        this.lessonHandlerService = lessonHandlerService;
     }
 
     public List<LessonDto> getAll(Integer courseId) {
-        Course course = courseValidator.checkCourseExist(courseId);
-        return getLessonsDto(course.getLessons());
+        Course course = courseHandlerService.checkCourseExist(courseId);
+        return lessonHandlerService.getLessonsDto(course.getLessons());
     }
 
     public LessonDto getById(Integer courseId, Integer lessonId) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
-        Lesson lesson = checkLessonExist(lessonKey);
+        Lesson lesson = lessonHandlerService.checkLessonExist(lessonKey);
         return lessonMapper.toDto(lesson);
     }
 
     @Transactional
     public LessonDto insert(Integer courseId, LessonDto lessonDto) {
 
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         Lesson lesson = lessonMapper.toEntity(lessonDto);
         lesson.setCourse(course);
         Lesson savedLesson = lessonRepository.save(lesson);
@@ -54,11 +57,10 @@ public class LessonService {
 
     @Transactional
     public LessonDto update(Integer courseId, Integer lessonId, LessonDto lessonDto) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
 
-        Lesson lesson = checkLessonExist(lessonKey);
+        Lesson lesson = lessonHandlerService.checkLessonExist(lessonKey);
         lesson.setTitle(lessonDto.getTitle());
         lesson.setUrl(lessonDto.getUrl());
         lesson.setDuration(lessonDto.getDuration());
@@ -69,25 +71,11 @@ public class LessonService {
 
     @Transactional
     public String delete(Integer courseId, Integer lessonId) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         LessonID lessonKey = new LessonID(lessonId, course);
-        Lesson lesson = checkLessonExist(lessonKey);
+        Lesson lesson = lessonHandlerService.checkLessonExist(lessonKey);
         lessonRepository.delete(lesson);
         return "Lesson deleted successfully with ID: "+ lesson.getId();
-    }
-
-    public Lesson checkLessonExist(LessonID lessonId) {
-        Optional<Lesson> optionalLesson = lessonRepository.findById(lessonId);
-        if(optionalLesson.isEmpty()){
-            throw new LessonNotFoundException("Lesson not found");
-        }
-        return optionalLesson.get();
-    }
-
-    public List<LessonDto> getLessonsDto(List<Lesson> lessons){
-        return lessons.stream()
-                .map(lesson -> lessonMapper.toDto(lesson)).toList();
     }
 
 }

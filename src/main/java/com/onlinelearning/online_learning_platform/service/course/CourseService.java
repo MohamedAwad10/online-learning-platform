@@ -15,105 +15,103 @@ import com.onlinelearning.online_learning_platform.mapper.*;
 import com.onlinelearning.online_learning_platform.model.*;
 import com.onlinelearning.online_learning_platform.model.enrollment.Enrollment;
 import com.onlinelearning.online_learning_platform.repository.*;
-import com.onlinelearning.online_learning_platform.service.*;
+import com.onlinelearning.online_learning_platform.service.category.CategoryHandlerService;
+import com.onlinelearning.online_learning_platform.service.lesson.LessonHandlerService;
+import com.onlinelearning.online_learning_platform.service.lesson.LessonService;
+import com.onlinelearning.online_learning_platform.service.review.ReviewHandlerService;
+import com.onlinelearning.online_learning_platform.service.review.ReviewService;
+import com.onlinelearning.online_learning_platform.service.tag.TagHandlerService;
+import com.onlinelearning.online_learning_platform.service.tag.TagService;
 import com.onlinelearning.online_learning_platform.service.user.StudentValidator;
+import com.onlinelearning.online_learning_platform.service.user.UserHandlerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
 
     private CourseRepository courseRepository;
-    private InstructorService instructorService;
-    private CategoryService categoryService;
-    private TagService tagService;
-    private LessonService lessonService;
-    private ReviewService reviewService;
     private CourseMapper courseMapper;
-    private CourseValidator courseValidator;
+    private CourseHandlerService courseHandlerService;
     private StudentValidator studentValidator;
+    private CategoryHandlerService categoryHandlerService;
+    private UserHandlerService userHandlerService;
+    private LessonHandlerService lessonHandlerService;
+    private ReviewHandlerService reviewHandlerService;
+    private TagHandlerService tagHandlerService;
 
-    public CourseService(CourseRepository courseRepository, InstructorService instructorService
-            , CategoryService categoryService, TagService tagService, LessonService lessonService
-            , ReviewService reviewService, CourseMapper courseMapper
-            , CourseValidator courseValidator, StudentValidator studentValidator){
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper
+            , CourseHandlerService courseHandlerService, StudentValidator studentValidator
+            , CategoryHandlerService categoryHandlerService, UserHandlerService userHandlerService
+            , LessonHandlerService lessonHandlerService, ReviewHandlerService reviewHandlerService
+            , TagHandlerService tagHandlerService){
         this.courseRepository = courseRepository;
-        this.instructorService = instructorService;
-        this.categoryService = categoryService;
-        this.tagService = tagService;
-        this.lessonService = lessonService;
-        this.reviewService = reviewService;
         this.courseMapper = courseMapper;
-        this.courseValidator = courseValidator;
+        this.courseHandlerService = courseHandlerService;
         this.studentValidator = studentValidator;
+        this.categoryHandlerService = categoryHandlerService;
+        this.userHandlerService = userHandlerService;
+        this.lessonHandlerService = lessonHandlerService;
+        this.reviewHandlerService = reviewHandlerService;
+        this.tagHandlerService = tagHandlerService;
     }
 
     @Transactional
     public CourseResponseDto insert(Integer instructorId, CourseRequestDTO courseRequestDTO) {
 
-        Instructor instructor = instructorService.checkInstructorExist(instructorId);
+        Instructor instructor = userHandlerService.checkInstructorExist(instructorId);
+        courseHandlerService.validateCourseTitleUniqueness(courseRequestDTO.getTitle());
+        Category category = categoryHandlerService.checkCategoryExistByName(courseRequestDTO.getCategory().getName());
 
-        courseValidator.validateCourseTitleUniqueness(courseRequestDTO.getTitle());
-
-        Category category = categoryService.checkCategoryExistByName(courseRequestDTO.getCategory().getName());
-
-        Set<Tag> tags = tagService.getOrCreateTagsDto(courseRequestDTO.getTags());
-        Set<TagDto> tagsDto = tagService.toTagsDto(tags);
+        Set<Tag> tags = tagHandlerService.getTags(courseRequestDTO.getTags());
+        Set<TagDto> tagsDto = tagHandlerService.toTagsDto(tags);
 
         Course course = courseMapper.toCourseEntity(courseRequestDTO, category, tags);
         course.setStatus(CourseStatus.DRAFT.toString());
         course.setInstructor(instructor);
 
         Course savedCourse = courseRepository.save(course);
-
         return courseMapper.toCourseCreationResponseDto
-                (savedCourse, tagsDto, categoryService.getCategoryDtoWithoutCourses(category));
+                (savedCourse, tagsDto, categoryHandlerService.getCategoryDtoWithoutCourses(category));
     }
 
     @Transactional
     public CourseResponseDto update(Integer courseId, CourseRequestDTO courseRequestDTO) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
-
-        Category category = categoryService.checkCategoryExistByName(courseRequestDTO.getCategory().getName());
+        Course course = courseHandlerService.checkCourseExist(courseId);
+        Category category = categoryHandlerService.checkCategoryExistByName(courseRequestDTO.getCategory().getName());
 
         course.setTitle(courseRequestDTO.getTitle());
         course.setDescription(courseRequestDTO.getDescription());
         course.setCategory(category);
         course.setImage(courseRequestDTO.getImage());
 
-        Set<Tag> tags = tagService.getOrCreateTagsDto(courseRequestDTO.getTags());
+        Set<Tag> tags = tagHandlerService.getTags(courseRequestDTO.getTags());
         course.setTags(tags);
 
         Course updatedCourse = courseRepository.save(course);
 
-        Set<TagDto> tagsDto = tagService.toTagsDto(tags);
-
+        Set<TagDto> tagsDto = tagHandlerService.toTagsDto(tags);
         return courseMapper.toCourseCreationResponseDto
-                (updatedCourse, tagsDto, categoryService.getCategoryDtoWithoutCourses(category));
+                (updatedCourse, tagsDto, categoryHandlerService.getCategoryDtoWithoutCourses(category));
     }
 
     @Transactional
     public String delete(int courseId) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
+        Course course = courseHandlerService.checkCourseExist(courseId);
         courseRepository.delete(course);
-
         return "Course deleted successfully with ID: " + course.getId();
     }
 
     public FullCourseDto findById(Integer courseId) {
+        Course course = courseHandlerService.checkCourseExist(courseId);
+        CourseInstructorDto courseInstructorDto = userHandlerService.getCourseInstructorDto(course.getInstructor());
 
-        Course course = courseValidator.checkCourseExist(courseId);
-        CourseInstructorDto courseInstructorDto = instructorService.getCourseInstructorDto(course.getInstructor());
-
-        List<LessonDto> lessons = lessonService.getLessonsDto(course.getLessons());
-        Set<ReviewDto> reviews = reviewService.getReviewsDto(course.getReviews());
-        CategoryDtoWithoutCourses categoryDto = categoryService.getCategoryDtoWithoutCourses(course.getCategory());
+        List<LessonDto> lessons = lessonHandlerService.getLessonsDto(course.getLessons());
+        Set<ReviewDto> reviews = reviewHandlerService.getReviewsDto(course.getReviews());
+        CategoryDtoWithoutCourses categoryDto = categoryHandlerService.getCategoryDtoWithoutCourses(course.getCategory());
 
         return courseMapper.toFullCourseDto(course, courseInstructorDto, lessons, reviews, categoryDto);
     }
@@ -128,20 +126,18 @@ public class CourseService {
     public List<AllCoursesDto> findAllPending() {
 
         List<Course> courses = courseRepository.findAllPending();
-        return getAllCoursesDto(courses);
+        return courseHandlerService.getAllCoursesDto(courses);
     }
 
     public List<AllCoursesDto> findAllApproved() {
 
         List<Course> courses = courseRepository.findAllApproved();
-        return getAllCoursesDto(courses);
+        return courseHandlerService.getAllCoursesDto(courses);
     }
 
     @Transactional
-    public String submitCourse(Integer courseId) {
-
-        Course course = courseValidator.checkCourseExist(courseId);
-
+    public String submitCourseForReview(Integer courseId) {
+        Course course = courseHandlerService.checkCourseExist(courseId);
         course.setStatus(CourseStatus.PENDING.toString());
         courseRepository.save(course);
 
@@ -150,9 +146,7 @@ public class CourseService {
 
     @Transactional
     public String approveCourse(Integer courseId) {
-
-        Course course = courseValidator.checkPendingCourseExist(courseId);
-
+        Course course = courseHandlerService.checkPendingCourseExist(courseId);
         if(course.getStatus().equals(CourseStatus.APPROVED.toString())){
             throw new CourseException("Course has been approved before");
         }
@@ -164,9 +158,7 @@ public class CourseService {
 
     @Transactional
     public String rejectCourse(Integer courseId) {
-
-        Course course = courseValidator.checkPendingCourseExist(courseId);
-
+        Course course = courseHandlerService.checkPendingCourseExist(courseId);
         if(course.getStatus().equals(CourseStatus.REJECTED.toString())){
             throw new CourseException("Course has been rejected before");
         }
@@ -178,11 +170,6 @@ public class CourseService {
 
     public List<AllCoursesDto> searchCourses(String keyword) {
         List<Course> courses = courseRepository.searchApprovedCourses(keyword);
-        return getAllCoursesDto(courses);
-    }
-
-    public List<AllCoursesDto> getAllCoursesDto(List<Course> courses){
-        return courses.stream()
-                .map(course -> courseMapper.toAllCoursesDto(course)).toList();
+        return courseHandlerService.getAllCoursesDto(courses);
     }
 }
