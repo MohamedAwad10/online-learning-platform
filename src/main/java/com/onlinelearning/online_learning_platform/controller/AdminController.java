@@ -5,6 +5,7 @@ import com.onlinelearning.online_learning_platform.dto.category.response.Categor
 import com.onlinelearning.online_learning_platform.dto.category.response.CategoryResponseDto;
 import com.onlinelearning.online_learning_platform.dto.course.response.AllCoursesDto;
 import com.onlinelearning.online_learning_platform.dto.user.response.AllUsersDto;
+import com.onlinelearning.online_learning_platform.dto.user.response.UserResponseDto;
 import com.onlinelearning.online_learning_platform.service.category.CategoryService;
 import com.onlinelearning.online_learning_platform.service.course.CourseService;
 import com.onlinelearning.online_learning_platform.service.user.UserService;
@@ -37,10 +38,11 @@ public class AdminController {
         return ResponseEntity.ok(userService.findAll());
     }
 
-//    @GetMapping("/users/{userId}") // i am confused should this go to user controller or here
-//    public ResponseEntity<UserResponseDto> findUserById(@PathVariable Integer userId){
-//        return new ResponseEntity<>(userService.findById(userId), HttpStatus.FOUND);
-//    }
+    // i am confused should this go to user controller or here
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<UserResponseDto> findUserById(@PathVariable Integer userId){
+        return new ResponseEntity<>(userService.findById(userId), HttpStatus.FOUND);
+    }
 
     @PutMapping("/users/{userId}/promote-user")
     public ResponseEntity<String> setAdminRoleToUser(@PathVariable Integer userId){
