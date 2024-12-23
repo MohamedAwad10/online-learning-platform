@@ -40,7 +40,7 @@ public class HomeController {
     }
 
     @GetMapping("/{studentId}/my-courses/learning")
-    public ResponseEntity<?> findMyEnrolledCourses(@PathVariable Integer studentId){
+    public ResponseEntity<?> getAllMyEnrolledCourses(@PathVariable Integer studentId){
 
         List<AllCoursesDto> courses = courseService.findAllEnrolledCourses(studentId);
         if(courses.isEmpty()){
@@ -51,7 +51,7 @@ public class HomeController {
     }
 
     @GetMapping("/approved-courses")
-    public ResponseEntity<?> findAllApprovedCourses(){
+    public ResponseEntity<?> getAllApprovedCourses(){
 
         List<AllCoursesDto> courses = courseService.findAllApproved();
         if(courses.isEmpty()){
