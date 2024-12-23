@@ -27,11 +27,12 @@ public class TagService {
     private TagHandlerService tagHandlerService;
 
     public TagService(TagRepository tagRepository, CourseRepository courseRepository
-            , TagMapper tagMapper, CourseHandlerService courseHandlerService) {
+            , TagMapper tagMapper, CourseHandlerService courseHandlerService, TagHandlerService tagHandlerService) {
         this.tagRepository = tagRepository;
         this.courseRepository = courseRepository;
         this.tagMapper = tagMapper;
         this.courseHandlerService = courseHandlerService;
+        this.tagHandlerService = tagHandlerService;
     }
 
     public List<TagDto> getAll() {
