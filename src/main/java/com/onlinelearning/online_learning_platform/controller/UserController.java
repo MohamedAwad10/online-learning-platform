@@ -39,11 +39,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> findUserById(@PathVariable Integer userId){
-        return new ResponseEntity<>(userService.findById(userId), HttpStatus.FOUND);
-    }
-
     @PutMapping("/update/{userId}")
     public ResponseEntity<UpdatedUserResponseDto> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable Integer userId){
         return ResponseEntity.ok(userService.update(userDto, userId));
